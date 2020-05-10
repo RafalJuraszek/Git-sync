@@ -18,7 +18,7 @@ if __name__ == "__main__":
         origin.pull()
         for i, url_repo in enumerate(repos):
             # najpeirw trzeba stworzyc (ale to bysmy pewnie brali z arajki
-            repo1 = repo.create_remote('vrepo'.format(i), url_repo)
+            repo1 = repo.create_remote('vrepo{}'.format(i), url_repo)
             # repo1 = repo.remote(name='repo1')
 
             repo1.push()
