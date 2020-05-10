@@ -3,7 +3,7 @@ from git import Repo
 from git import RemoteProgress
 
 
-
+repos = ['https://gitlab.com/RafalJuraszek/test4.git','https://IoTeamRak@bitbucket.org/IoTeamRak/test3.git']
 
 if __name__ == "__main__":
 
@@ -16,11 +16,13 @@ if __name__ == "__main__":
         origin = repo.remotes['origin']
         print(type(origin))
         origin.pull()
-        #najpeirw trzeba stworzyc (ale to bysmy pewnie brali z arajki
-        #repo1 = repo.create_remote('repo1', 'https://IoTeamRak@bitbucket.org/IoTeamRak/test2.git')
-        repo1 = repo.remote(name='repo1')
+        for i, url_repo in enumerate(repos):
+            # najpeirw trzeba stworzyc (ale to bysmy pewnie brali z arajki
+            repo1 = repo.create_remote('vrepo'.format(i), url_repo)
+            # repo1 = repo.remote(name='repo1')
 
-        repo1.push()
+            repo1.push()
+
 
     else:
         pass
