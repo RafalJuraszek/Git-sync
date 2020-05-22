@@ -9,6 +9,7 @@ verify_ssl = true
 gitdb = "*"
 gitpython = "*"
 flask = "*"
+requests = "*"
 
 [requires]
 python_version = "3.8"
