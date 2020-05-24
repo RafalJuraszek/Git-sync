@@ -1,9 +1,14 @@
 import os
 from git import Repo
 from git import RemoteProgress
+from git import exc
+from git import Git
 
 
 repos = ['https://gitlab.com/RafalJuraszek/io-test']
+
+repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
+print(repo.remotes['origin'])
 
 def synchronize():
 
@@ -26,3 +31,26 @@ def synchronize():
 
     else:
         pass
+
+def log(message, lvl = 0):
+    print(message)
+
+class SyncRepository:
+    def __init__(self):
+        self.localRepo = None
+        self.origin = None
+        self.remotes = []
+    
+    def initialize(self, localPath):
+        try:
+            self.localRepo = Repo(localPath)
+            self.origin = repo.remotes['origin']
+            self.remotes = [r[1] for r in repo.remotes.items() if r[1] is not self.origin]
+            return self
+        except exc.InvalidGitRepositoryError:
+            log(f'Invalid git repository in {localPath}')            
+
+    def create(self, origin, localPath):
+        Git(localPath).clone(origin)
+        self.initialize(localPath)
+    
