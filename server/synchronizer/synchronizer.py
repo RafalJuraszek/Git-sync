@@ -8,7 +8,7 @@ from git import Git
 repos = ['https://gitlab.com/RafalJuraszek/io-test']
 
 repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
-print(repo.remotes['origin'])
+print([r for r in repo.remotes])
 
 def synchronize():
 
@@ -45,7 +45,7 @@ class SyncRepository:
         try:
             self.localRepo = Repo(localPath)
             self.origin = repo.remotes['origin']
-            self.remotes = [r[1] for r in repo.remotes.items() if r[1] is not self.origin]
+            self.remotes = [r for r in repo.remotes.items() if r is not self.origin]
             return self
         except exc.InvalidGitRepositoryError:
             log(f'Invalid git repository in {localPath}')            
@@ -54,3 +54,17 @@ class SyncRepository:
         Git(localPath).clone(origin)
         self.initialize(localPath)
     
+    def addRemote(self, remoteUrl, remoteName=''):
+        try:
+            newRemote = self.localRepo.create_remote(remoteName, remoteUrl)        
+            self.remotes.append(newRemote)
+        except exc.GitCommandError as e:
+            log(e.message)
+
+
+    def addRemotes(self, remotes):
+        for remote in remotes:
+            self.addRemote(remote, self.generateRemoteName(remote))
+
+    def generateRemoteName(self, remote:str):
+        return remote
