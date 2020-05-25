@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "63c53637-cbb6-46c2-b219-7b25721d6ff0",
+		"name": "io",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add repo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"master\": {\n        \"id\": \"repo1\",\n        \"url\": \"url1\",\n        \"login\": \"login1\",\n        \"password\": \"password1\",\n        \"path\": \"path1\"\n    },\n    \"backups\": [\n        {\n            \"url\": \"url2\",\n            \"login\": \"login2\",\n            \"password\": \"password2\"\n        }\n    ],\n    \"frequency\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "host:port/addRepo",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"addRepo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add backup",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\" : \"id1\",\n    \"backups\": [\n        {\n            \"url\": \"url2\",\n            \"login\": \"login2\",\n            \"password\": \"password2\"\n        }\n    ],\n    \"frequency\" : 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "host:port/modifyRepo",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"modifyRepo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get repos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "host:port/repos",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"repos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "notify",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\" : \"id1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "host:port/notify",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"notify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete backup",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"url\" : \"url1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "host:port/repos/{id}",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"repos",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete repo",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "host:port/repos/{id}",
+					"host": [
+						"host"
+					],
+					"port": "port",
+					"path": [
+						"repos",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
