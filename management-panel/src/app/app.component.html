@@ -1,2 +1,27 @@
-<button name="synchronize"  (click)="synchronize()">Synchronize</button>
-{{helloMessage}}
+<nav class="navbar navbar-default">
+<div class="container-fluid">
+  <div class="navbar-header">
+    <h1>Git Sync</h1>
+
+      <ul class="nav nav-tabs">
+        <li role="presentation" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"><a routerLink="/">Home</a></li>
+        <li role="presentation" routerLinkActive="active"><a routerLink="servers">Servers</a></li>
+        <li role="presentation" routerLinkActive="active"><a [routerLink]="['users']">Users</a></li>
+      </ul>
+  </div>
+
+
+</div>
+</nav>
+
+<div class="container-fluid">
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+    <router-outlet></router-outlet>
+    <button name="synchronize"  (click)="synchronize()">Synchronize</button>
+    {{helloMessage}}
+  </div>
+</div>
+</div>
+<!--<router-outlet></router-outlet>-->
+

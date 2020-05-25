@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const url = require('url');
 
@@ -13,15 +13,26 @@ const createWindow = () => {
     // Create the browser window.
     win = new BrowserWindow({
       width: 800,
-      height: 600
+      height: 600,
+      webPreferences: {
+        nodeIntegration: true
+      }
     });
 
     // and load the app.
-    win.loadURL(url.format({
-      pathname: 'localhost:4200',
-      protocol: 'http:',
-      slashes: true
-    }));
+        win.loadURL(url.format({
+          pathname: 'localhost:4200',
+          protocol: 'http:',
+          slashes: true
+        }));
+
+    // win.loadURL(
+    //   url.format({
+    //     pathname: path.join(__dirname, `/dist/index.html`),
+    //     protocol: "file:",
+    //     slashes: true
+    //   })
+    // );
 
     win.webContents.openDevTools();
 
@@ -54,5 +65,12 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
     createWindow();
+  }
+});
+
+ipcMain.on("open-file-dialog-for-dir", async event => {
+  const dir = await dialog.showOpenDialog({ properties: ["openDirectory"] });
+  if (dir) {
+    event.sender.send("selected-dir", dir.filePaths[0]);
   }
 });
