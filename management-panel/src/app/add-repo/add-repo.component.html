@@ -1,0 +1,48 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form [formGroup]="repoForm" >
+        <div id="user-data">
+          <div class="form-group">
+            <label for="url">Repo URL</label>
+            <input
+              type="text"
+              id="url"
+              class="form-control"
+              name="url"
+              required
+              formControlName="url">
+          </div>
+
+          <div class="form-group">
+            <label for="login">Login</label>
+            <input
+              type="text"
+              id="login"
+              class="form-control"
+              name="login"
+              required
+              formControlName="login">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              name="password"
+              required
+              formControlName="password">
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary"  (click)="pickPath()"> Pick Path</button>
+            <p class="h3">{{selectedDir}}</p>
+          </div>
+
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

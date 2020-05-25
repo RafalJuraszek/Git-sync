@@ -12,9 +12,12 @@ import {MegaMenuModule} from 'primeng';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import {FileUploadModule} from 'primeng/fileupload';
+import { AddRepoComponent } from './add-repo/add-repo.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
+  {path: 'addRepo', component: AddRepoComponent}
   // {path: 'users', component: UsersComponent },
   // {path: 'users/:id/:name', component: UsersComponent },
   // {path: 'servers', component: ServersComponent }
@@ -23,7 +26,8 @@ const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    AddRepoComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +36,8 @@ const appRoutes: Routes = [
     MenuModule,
     MegaMenuModule,
     BrowserAnimationsModule,
-    FileUploadModule
+    FileUploadModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
