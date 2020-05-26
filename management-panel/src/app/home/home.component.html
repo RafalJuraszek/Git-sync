@@ -1,4 +1,38 @@
-<p>App for syncing github repos with another repos!</p>
+<div class="container">
+  <div class="row">
+
+    <div class="col-xs-8">
+      <h1>Repos</h1>
+      <div class="row">
+        <div class="col-xs-12">
+
+
+          <div class="row">
+            <div class="col-xs-12">
+              <button class="btn btn-primary" type="submit" (click)="add()">Add</button>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <hr>
+      <ul class="list-group">
+        <div  class="list-group-item clearfix" style="cursor: pointer"
+             *ngFor="let repo of repos"
+        >
+          <div class="pull-left" (click)="checkRepo(repo)">
+            <h4 class="list-group-item-heading">{{repo.id}}</h4>
+            <p class="list-group-item-text">{{repo.url}}</p>
+          </div>
+          <button class="btn btn-danger pull-right" type="button" (click)="delete(repo)">Delete</button>
+        </div>
+
+      </ul>
+    </div>
+  </div>
+</div>
 
 
 

@@ -1,8 +1,20 @@
-<div class="container">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
-      <form [formGroup]="repoForm" >
-        <div id="user-data">
+    <div class="col-xs-10 ">
+      <h1>Add Repo</h1>
+      <form [formGroup]="repoForm" (ngSubmit)="submit()">
+        <div class="row">
+        <div id="user-data"  class="col-xs-8 ">
+          <div class="form-group">
+            <label for="id">ID</label>
+            <input
+              type="text"
+              id="id"
+              class="form-control"
+              name="id"
+              required
+              formControlName="id">
+          </div>
           <div class="form-group">
             <label for="url">Repo URL</label>
             <input
@@ -36,13 +48,81 @@
               formControlName="password">
           </div>
           <div class="form-group">
-            <button class="btn btn-primary"  (click)="pickPath()"> Pick Path</button>
-            <p class="h3">{{selectedDir}}</p>
+            <button type="button" class="btn btn-primary" (click)="pickPath()"> Pick Path</button>
+            <input
+              [(ngModel)]="selectedDir"
+              class="form-control"
+              name="path"
+              required
+              formControlName="path">
           </div>
 
         </div>
+        </div>
+        <hr>
+
+
+        <h1>Add backup</h1>
+        <div class="row">
+          <div class="col-xs-12">
+
+            <div class="row">
+              <div class="col-sm-4 form-group">
+                <label for="backup-url">URL</label>
+                <input type="text"
+                       id="backup-url"
+                       class="form-control"
+                       #url>
+              </div>
+              <div class="col-sm-4 form-group">
+                <label for="backup-login">Login</label>
+                <input type="text"
+                       id="backup-login"
+                       class="form-control"
+                       #login>
+              </div>
+
+              <div class="col-sm-4 form-group">
+                <label for="backup-password">Password</label>
+                <input
+                  id="backup-password"
+                  class="form-control"
+                  type="password"
+                  #password>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <button type="button" class="btn btn-primary" (click)="addBackup()">Add</button>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <hr>
+        <h1>Backups</h1>
+
+        <ul class="list-group">
+          <li class="list-group-item" style="cursor: pointer"
+              *ngFor="let backup of backups"
+          >{{backup.url}} </li>
+
+        </ul>
+        <hr>
+
+        <button
+          class="btn btn-success submit btn-lg center-block"
+          type="submit"
+          >Submit
+        </button>
+
+
       </form>
 
+
     </div>
+
+
   </div>
 </div>
