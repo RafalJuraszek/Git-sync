@@ -17,7 +17,7 @@ export class RepoService {
   getRepos(): Observable<RepoModel[]> {
 
     return this.http.get<RepoModel[]>(this.basicApiUrl + 'repos').pipe(tap(repos => {
-
+      console.log(repos)
       this.repos = repos;
     }));
   }

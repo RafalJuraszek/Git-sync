@@ -21,11 +21,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.repoService.getRepos().subscribe(repos => {
-
+      console.log(repos)
       this.repos = repos;
     });
     //to tylko symuluje ze cos dostalismy, bo nie mam backendu
-    this.repos.push(new RepoModel('1', 'url', 'rafal', 'elo', 'c', null));
+    //this.repos.push(new RepoModel('1', 'url', 'rafal', 'elo', 'c', null));
   }
 
   checkRepo(repo) {
