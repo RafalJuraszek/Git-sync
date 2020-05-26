@@ -30,11 +30,12 @@ class SyncRepository:
                 log(f'Repo not loaded correctly from {localPath}')
             return self
         except exc.InvalidGitRepositoryError:
-            log(f'Invalid git repository in {localPath}')            
+            log(f'Invalid git repository in {localPath}')
+        return None
 
     def create(self, origin, localPath):
-        Git(localPath).clone(origin)
-        self.initialize(localPath)
+        Repo.clone_from(origin, localPath)
+        return self.initialize(localPath)
     
     def addRemote(self, remoteUrl, remoteName=''):
         try:
@@ -51,44 +52,56 @@ class SyncRepository:
     def generateRemoteName(self, remote:str):
         return remote
 
-    def pull(self):
-        self.origin.pull()
+    def pull(self, branch):
+        self.origin.update()
+        self.localRepo.git.pull('--rebase')
 
-    def pushToRemotes(self):
+    def pushToRemotes(self, branch):
+        self.localRepo.git.checkout(branch, '--force')
         for remote in self.remotes:
             remote.push('--force')
 
+                # , '--set-upstream', remote.name, branchName
+    def synchroAll(self):
+        for ref in self.origin.refs:
+            print(ref)
+            branchName = ref.name.split('/')[1]
+            print(branchName)
+            if branchName == 'HEAD':
+                continue
+            # checkout to next branch
+            self.localRepo.git.checkout(branchName, '--force')
+            self.pull(branchName)
+            self.pushToRemotes(branchName)
 
-repos = ['https://gitlab.com/RafalJuraszek/io-test']
 
-repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
-print([r for r in repo.remotes])
+# repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
 
-def synchronize():
-    # Repo object used to programmatically interact with Git repositories
-    #jesli plik ten jest w repo gita to bierze to repo (brak argumentu), mozna dac sciezke do folderu z gitem
-    repo = Repo('C:\\Users\\rafal\\Desktop\\semestr 6\\io\\test')
-    # check that the repository loaded correctly
-    if not repo.bare:
-
-        origin = repo.remotes['origin']
-        print(type(origin))
-        origin.pull()
-        for i, url_repo in enumerate(repos):
-            # najpeirw trzeba stworzyc (ale to bysmy pewnie brali z arajki
-            repo1 = repo.create_remote('v1repo{}'.format(i), url_repo)
-            #repo1 = repo.remote(name='v1repo{}'.format(i))
-
-            repo1.push()
-
-    else:
-        pass
 
 def synchronize2(syncRepo: SyncRepository):
-    syncRepo.pull()
-    syncRepo.pushToRemotes()
+    syncRepo.synchroAll()
 
 repo = SyncRepository()
+# repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
 repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
+repo.addRemote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
+# repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
+
+# remote_refs = repo.remote().refs
+# # for remote in repo.remotes:
+
+# remote_refs = repo.remotes['origin'].refs
+# print(repo.active_branch)
+# repo.git.checkout('synchro')
+# print(repo.active_branch)
+
+# for refs in remote_refs:
+#     branchName = refs.name.split('/')[1]
+#     print(branchName)
+#     if branchName == 'HEAD':
+#         continue
+#     print(refs)
+#     refs.checkout()
+#     print(repo.active_branch)
 
 synchronize2(repo)

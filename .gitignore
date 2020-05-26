@@ -2,6 +2,8 @@
 .idea/
 __pycache__/
 *.db
+.vscode/
+
 
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
