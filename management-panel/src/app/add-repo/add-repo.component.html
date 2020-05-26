@@ -18,7 +18,7 @@
           <div class="form-group">
             <label for="url">Repo URL</label>
             <input
-              type="text"
+              type="url"
               id="url"
               class="form-control"
               name="url"
@@ -59,7 +59,7 @@
 
         </div>
         </div>
-        <hr>
+
 
 
         <h1>Add backup</h1>
@@ -69,7 +69,7 @@
             <div class="row">
               <div class="col-sm-4 form-group">
                 <label for="backup-url">URL</label>
-                <input type="text"
+                <input type="url"
                        id="backup-url"
                        class="form-control"
                        #url>
@@ -100,7 +100,7 @@
 
           </div>
         </div>
-        <hr>
+        
         <h1>Backups</h1>
 
         <ul class="list-group">
@@ -114,6 +114,7 @@
         <button
           class="btn btn-success submit btn-lg center-block"
           type="submit"
+          [disabled] = "!repoForm.valid"
           >Submit
         </button>
 
