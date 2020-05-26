@@ -15,9 +15,9 @@ class SyncRepository:
         self.origin = None
         self.remotes = []
     
-    def initialize(self, localPath):
+    def initialize(self, local_path):
         try:
-            self.localRepo = Repo(localPath)
+            self.localRepo = Repo(local_path)
             if not self.localRepo.bare:                
                 for r in self.localRepo.remotes:
                     print(type(r))
@@ -27,64 +27,63 @@ class SyncRepository:
                     else:
                         self.origin = r                
             else:
-                log(f'Repo not loaded correctly from {localPath}')
+                log(f'Repo not loaded correctly from {local_path}')
             return self
         except exc.InvalidGitRepositoryError:
-            log(f'Invalid git repository in {localPath}')
+            log(f'Invalid git repository in {local_path}')
         return None
 
-    def create(self, origin, localPath):
-        Repo.clone_from(origin, localPath)
-        return self.initialize(localPath)
+    def create(self, origin, local_path):
+        Repo.clone_from(origin, local_path)
+        return self.initialize(local_path)
     
-    def addRemote(self, remoteUrl, remoteName=''):
+    def add_remote(self, remote_url, remote_name=''):
         try:
-            newRemote = self.localRepo.create_remote(remoteName, remoteUrl)        
-            self.remotes.append(newRemote)
+            new_remote = self.localRepo.create_remote(remote_name, remote_url)
+            self.remotes.append(new_remote)
         except exc.GitCommandError as e:
-            log(e.message)
+            log(e)
 
-
-    def addRemotes(self, remotes):
+    def add_remotes(self, remotes):
         for remote in remotes:
-            self.addRemote(remote, self.generateRemoteName(remote))
+            self.add_remote(remote, self.generate_remote_name(remote))
 
-    def generateRemoteName(self, remote:str):
+    def generate_remote_name(self, remote:str):
         return remote
 
     def pull(self, branch):
-        self.origin.update()
         self.localRepo.git.pull('--rebase')
+        self.localRepo.git.submodule('update', '--recursive')
 
-    def pushToRemotes(self, branch):
+    def push_to_remotes(self, branch):
         self.localRepo.git.checkout(branch, '--force')
         for remote in self.remotes:
             remote.push('--force')
 
-                # , '--set-upstream', remote.name, branchName
-    def synchroAll(self):
+    def synchronize_all(self):
         for ref in self.origin.refs:
             print(ref)
-            branchName = ref.name.split('/')[1]
-            print(branchName)
-            if branchName == 'HEAD':
+            branch_name = ref.name.split('/')[1]
+            print(branch_name)
+            if branch_name == 'HEAD':
                 continue
             # checkout to next branch
-            self.localRepo.git.checkout(branchName, '--force')
-            self.pull(branchName)
-            self.pushToRemotes(branchName)
+            self.localRepo.git.checkout(branch_name, '--force')
+            self.pull(branch_name)
+            self.push_to_remotes(branch_name)
 
 
 # repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
 
 
-def synchronize2(syncRepo: SyncRepository):
-    syncRepo.synchroAll()
+def synchronize2(sync_repo: SyncRepository):
+    sync_repo.synchronize_all()
+
 
 repo = SyncRepository()
 # repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
 repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
-repo.addRemote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
+repo.add_remote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
 # repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
 
 # remote_refs = repo.remote().refs
