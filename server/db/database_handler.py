@@ -109,8 +109,8 @@ class ReposDatabaseHandler:
                                             ); """
 
             sql_create_backup_repos_table = """CREATE TABLE IF NOT EXISTS backup_repos (
-                                            id integer PRIMARY KEY,
-                                            master_repo_id NOT NULL,
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT
+                                            master_repo_id text NOT NULL,
                                             url text NOT NULL,
                                             login text NOT NULL,
                                             password text NOT NULL,
@@ -144,9 +144,9 @@ class ReposDatabaseHandler:
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
         try:
             insert_query = """INSERT INTO backup_repos
-                          (id, master_repo_id, url, login, password) 
+                          (master_repo_id, url, login, password) 
                            VALUES 
-                          ((select max(id) from backup_repos) ,?, ?, ?, ?)"""
+                          (?, ?, ?, ?)"""
             data_tuple = ( master_repo_id, url, login, password)
             self.cursor.execute(insert_query, data_tuple)
             self.connection.commit()
