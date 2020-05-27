@@ -1,13 +1,13 @@
 import os
-from git import Repo
-from git import RemoteProgress
-from git import exc
-from git import Git
+from time import sleep
 
+from git import Repo
+from git import exc
+from datetime import datetime
+import logging
 
 def log(message, lvl = 0):
     print(message)
-
 
 class SyncRepository:
     def __init__(self):
@@ -16,22 +16,16 @@ class SyncRepository:
         self.remotes = []
     
     def initialize(self, local_path):
-        try:
-            self.localRepo = Repo(local_path)
-            if not self.localRepo.bare:                
-                for r in self.localRepo.remotes:
-                    print(type(r))
-                    print(r)
-                    if r.name != 'origin':
-                        self.remotes.append(r)
-                    else:
-                        self.origin = r                
-            else:
-                log(f'Repo not loaded correctly from {local_path}')
-            return self
-        except exc.InvalidGitRepositoryError:
-            log(f'Invalid git repository in {local_path}')
-        return None
+        self.localRepo = Repo(local_path)
+        if not self.localRepo.bare:
+            for r in self.localRepo.remotes:
+                if r.name != 'origin':
+                    self.remotes.append(r)
+                else:
+                    self.origin = r
+        else:
+            log(f'Repo not loaded correctly from {local_path}')
+        return self
 
     def create(self, origin, local_path):
         Repo.clone_from(origin, local_path)
@@ -73,34 +67,37 @@ class SyncRepository:
             self.push_to_remotes(branch_name)
 
 
-# repo = Repo('C:\\Users\\Adrian\\Studia\\IoTest')
+
+def synchronization_loop(period, start: datetime):
+    delay = datetime.now() - start
+
+    sleep(delay.total_seconds() if delay.total_seconds() > 0 else 0)
+
+    while True:
+        start = datetime.now()
+        local_repos = ['C:\\Users\\Adrian\\Studia\\IoTest']  # here we need db data
+        for r in local_repos:
+            repo = SyncRepository()
+            try:
+                repo.initialize(r)
+            except exc.InvalidGitRepositoryError:
+                url = 'https://'  # here we need db data
+                repo.create(url, local_repos)
+            repo.synchronize_all()
+        time_to_wait = period - (datetime.now() - start).total_seconds()
+        sleep(time_to_wait if time_to_wait > 0 else 0)
 
 
 def synchronize2(sync_repo: SyncRepository):
     sync_repo.synchronize_all()
 
 
-repo = SyncRepository()
-# repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
-repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
-repo.add_remote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
+# repo = SyncRepository()
+# # repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
 # repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
+# repo.add_remote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
+# # repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
+#
+# synchronize2(repo)
 
-# remote_refs = repo.remote().refs
-# # for remote in repo.remotes:
-
-# remote_refs = repo.remotes['origin'].refs
-# print(repo.active_branch)
-# repo.git.checkout('synchro')
-# print(repo.active_branch)
-
-# for refs in remote_refs:
-#     branchName = refs.name.split('/')[1]
-#     print(branchName)
-#     if branchName == 'HEAD':
-#         continue
-#     print(refs)
-#     refs.checkout()
-#     print(repo.active_branch)
-
-synchronize2(repo)
+synchronization_loop(30, datetime.now())
