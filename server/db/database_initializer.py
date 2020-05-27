@@ -1,4 +1,4 @@
-from database_handler import ReposDatabaseHandler, EmailsDatabaseHandler
+from server.notificator.notificator import ReposDatabaseHandler, EmailsDatabaseHandler
 
 repos_db = ReposDatabaseHandler()
 repos_db.create_master_repos_and_backup_repos_tables()
