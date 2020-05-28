@@ -64,7 +64,7 @@ def add_repo():
     repos_db.close()
     # to jest tylko jak sie bawilem w tworzenie odpowiedzi, moze sie przyda
     array = []
-    array.append(Repo())
+    # array.append(Repo())
     response = app.response_class(
         response=json.dumps(array, cls = MyEncoder),
         status=200,
@@ -80,17 +80,20 @@ def modify_repo():
     master_repo_id = data.get('id', None)
     backups_json = data.get('backups', None)
     frequency = data.get('frequency', None)
-
+    print("modify repo")
     repos_db = ReposDatabaseHandler()
-    repos_db.update_frequency_master_repos(id=master_repo_id, frequency=frequency)
+    if frequency is not None:
+        print("update frequency")
+        repos_db.update_frequency_master_repos(id=master_repo_id, frequency=frequency)
     for backup_repo in backups_json:
         repos_db.update_or_create_backup_repo(master_repo_id,
                                               backup_repo.get('url', None),
                                               backup_repo.get('login', None),
                                               backup_repo.get('password', None))
     repos_db.close()
+    array = []
     response = app.response_class(
-        response=[],
+        response=json.dumps(array, cls = MyEncoder),
         status=200,
         mimetype='application/json'
     )
@@ -120,11 +123,14 @@ def get_repos():
 def delete_repos(id):
     data = request.get_json()
     repos_db = ReposDatabaseHandler()
-    # logika -> jak jest body to usuwamy tylko 1 konretny backup, jak bez body całe repo
-    if data is None:
+    print(id)
+    # logika -> jak jest body z urlem to usuwamy tylko 1 konretny backup, jak bez body całe repo
+    url = data.get('url', None)
+    if url is None:
+        print("delete master")
         repos_db.delete_master_repo(id)
     else:
-        url = data.get('url', None)
+        print("delete " + url)
         repos_db.delete_backup_repo(master_repo_id=id, url = url)
 
     repos_db.close()
@@ -136,7 +142,7 @@ def delete_repos(id):
     return response
 
 
-@app.route("/api/notify", methods=['GET'])
+@app.route("/api/notify", methods=['PUT'])
 def get_notify_data():
     data = request.get_json()
     notify(data.get('id', None))
