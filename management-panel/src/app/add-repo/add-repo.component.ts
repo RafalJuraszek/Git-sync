@@ -98,5 +98,11 @@ export class AddRepoComponent implements OnInit {
     const backupPassword = this.password.nativeElement.value;
     const newBackup = new BackupModel(backupUrl, backupLogin, backupPassword);
     this.backups.push(newBackup);
+    this.clearBackup()
+  }
+  private clearBackup() {
+    this.url.nativeElement.value = "";
+    this.login.nativeElement.value = "";
+    this.password.nativeElement.value = "";
   }
 }
