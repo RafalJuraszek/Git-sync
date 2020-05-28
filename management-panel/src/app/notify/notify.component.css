@@ -1,0 +1,9 @@
+.notification {
+    margin: 0 0 0 50px;
+}
+
+.my-container {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+}

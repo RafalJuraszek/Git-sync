@@ -1,9 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {IpcRenderer} from 'electron';
 import {RepoService} from '../services/repo.service';
 import {RepoModel} from '../model/repo.model';
-
 
 @Component({
   selector: 'app-home',
@@ -12,16 +10,14 @@ import {RepoModel} from '../model/repo.model';
   providers: [RepoService]
 })
 export class HomeComponent implements OnInit {
-
   repos: RepoModel[] = [];
 
   constructor(private router: Router, private repoService: RepoService) {
-
   }
 
   ngOnInit() {
-    this.repoService.getRepos().subscribe(repos => {
-      console.log(repos)
+    this.repoService.getRepos().subscribe((repos) => {
+      console.log(repos);
       this.repos = repos;
     });
     //to tylko symuluje ze cos dostalismy, bo nie mam backendu
@@ -37,12 +33,9 @@ export class HomeComponent implements OnInit {
   }
 
   delete(repo) {
-    this.repoService.deleteRepo(repo).subscribe(response => {
-
+    this.repoService.deleteRepo(repo).subscribe((response) => {
       const repoToDelete = this.repos.indexOf(repo);
       this.repos.splice(repoToDelete, 1);
     });
   }
-
-
 }

@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {RepoModel} from '../model/repo.model';
@@ -35,7 +35,9 @@ export class RepoService {
     return this.http.delete(this.basicApiUrl + 'repos/' + repo.id);
   }
 
-
+  notify(id: string): Observable<any> {
+    return this.http.post(`${this.basicApiUrl}notify`, {id});
+  }
 
 }
 
