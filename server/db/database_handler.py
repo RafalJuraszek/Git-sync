@@ -109,7 +109,7 @@ class ReposDatabaseHandler:
                                             ); """
 
             sql_create_backup_repos_table = """CREATE TABLE IF NOT EXISTS backup_repos (
-                                            id INTEGER PRIMARY KEY AUTOINCREMENT
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
                                             master_repo_id text NOT NULL,
                                             url text NOT NULL,
                                             login text NOT NULL,

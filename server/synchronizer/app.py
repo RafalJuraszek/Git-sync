@@ -12,41 +12,54 @@ app = Flask(__name__)
 @app.route("/api/testget", methods=['GET'])
 def get_test():
     print("get_test")
-
+    response = app.response_class(
+        response=json.dumps([], cls = MyEncoder),
+        status=200,
+        mimetype='application/json'
+    )
+    # response = make_response("hello", 200)
+    # response.mimetype = "text/plain"
+    return response
 
 
 @app.route("/api/addRepo", methods=['POST'])
 def add_repo():
     print("debug -2")
     print(request)
-    print(request._get_data_for_json())
+    print(request.get_json())
     data = request.get_json()
     print("debug -1")
     print(data)
-    master_repo_json = data.get('master', None)
+    # master_repo_json = data.get('master', None)
 
     frequency = data.get('frequency', None)
     backups_json = data.get('backups', None)
-    if master_repo_json == None or frequency == None or backups_json == None:
+    if  frequency == None or backups_json == None:
         print("DEBUG 1")
         return
     print("ok")
     repos_db = ReposDatabaseHandler()
     # jednorazowo
     # repos_db.create_master_repos_and_backup_repos_tables()
+    print(data.get('id', None))
+    print(data.get('url', None))
+    print(data.get('login', None))
+    print(data.get('password', None))
+    print(frequency)
 
-    repos_db.insert_data_master_repos(master_repo_json.get('id', None),
-                                      master_repo_json.get('url', None),
-                                      master_repo_json.get('login', None),
-                                      master_repo_json.get('password', None),
-                                      master_repo_json.get('path', None),
+
+    repos_db.insert_data_master_repos(data.get('id', None),
+                                      data.get('url', None),
+                                      data.get('login', None),
+                                      data.get('password', None),
+                                      data.get('path', None),
                                       frequency)
 
     for backup_repo in backups_json:
-        repos_db.insert_backup_repos(master_repo_json.get('id', None),
+        repos_db.insert_data_backup_repos(data.get('id', None),
                                      backup_repo.get('url', None),
                                      backup_repo.get('login', None),
-                                     backup_repo.get('password', None) ,)
+                                     backup_repo.get('password', None))
 
     repos_db.close()
     # to jest tylko jak sie bawilem w tworzenie odpowiedzi, moze sie przyda
