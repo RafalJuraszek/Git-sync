@@ -1,5 +1,6 @@
 <div class="container">
   <div class="row">
+    <div class="col-xs-7 ">
     <h1>Choose repo to notify followers about</h1>
     <select class="form-control" required [(ngModel)]="selectedValue">
       <option *ngFor="let repo of repos" [value]="repo.id">{{repo.id}}</option>
@@ -9,6 +10,7 @@
       <button type="button" class="btn btn-primary" (click)="notify()">Notify!</button>
       <p class="notification" *ngIf="isNotificationSentSuccessfully">Notification sent!</p>
       <p class="notification" *ngIf="isError">Error during sending notification!</p>
+    </div>
     </div>
   </div>
 </div>
