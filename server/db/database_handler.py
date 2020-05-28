@@ -192,66 +192,50 @@ class ReposDatabaseHandler:
     def insert_data_master_repos(self, id, url, login, password, path, frequency):
         try:
             sqliteConnection = sqlite3.connect('database_all.db')
-            sqlite_create_table_query = ''' CREATE TABLE IF NOT EXISTS masterRepos (
-                                                        id text PRIMARY KEY,
-                                                        url text NOT NULL,
-                                                        login text NOT NULL,
-                                                        password text NOT NULL,
-                                                        path NOT NULL UNIQUE,
-                                                        frequency integer NOT NULL
-                                                    ); '''
-
             cursor = sqliteConnection.cursor()
-            print("Successfully Connected to SQLite")
-            cursor.execute(sqlite_create_table_query)
+            print("Connected to SQLite")
+
+            sqlite_insert_with_param = """INSERT INTO masterRepos
+                              (id, url, login, password, path, frequency) 
+                               VALUES 
+                              (?, ?, ?, ?, ?, ?)"""
+
+            data_tuple = (id, url, login, password, path, frequency)
+            cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
-            print("SQLite table created")
-
-            cursor.close()
-
+            print("Python Variables inserted successfully into SqliteDb_developers table")
         except sqlite3.Error as error:
             print("Error while creating a sqlite table", error)
         finally:
             if (sqliteConnection):
                 sqliteConnection.close()
                 print("sqlite connection is closed")
-        # try:
-        #     insert_query = """INSERT INTO master_repos
-        #                   (id, url, login, password, path, frequency)
-        #                    VALUES
-        #                   (?, ?, ?, ?, ?, ?)"""
-        #
-        #
-        #     print("DEBUG I 1")
-        #     data_tuple = (id, url, login, password, path, frequency)
-        #     print("DEBUG I 2")
-        #
-        #     self.cursor.execute(insert_query, data_tuple)
-        #     print("DEBUG I 3")
-        #
-        #     self.connection.commit()
-        #     print("DEBUG I 4")
-        #
-        # except sqlite3.Error as error:
-        #     print("Error while inserting to table master_repos")
-        #     print(error)
-        #     print(error.__traceback__)
-        #
 
 
 
 
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
         try:
-            insert_query = """INSERT INTO backup_repos
-                          (master_repo_id, url, login, password) 
-                           VALUES 
-                          (?, ?, ?, ?)"""
-            data_tuple = ( master_repo_id, url, login, password)
-            self.cursor.execute(insert_query, data_tuple)
-            self.connection.commit()
+            sqliteConnection = sqlite3.connect('database_all.db')
+            cursor = sqliteConnection.cursor()
+            print("Connected to SQLite")
+
+            sqlite_insert_with_param = """INSERT INTO backupRepos
+                              (master_repo_id, url, login, password)  
+                               VALUES 
+                              (?, ?, ?, ?)"""
+
+            data_tuple = (master_repo_id, url, login, password)
+            cursor.execute(sqlite_insert_with_param, data_tuple)
+            sqliteConnection.commit()
+            print("Python Variables inserted successfully into SqliteDb_developers table")
         except sqlite3.Error as error:
-            print("Error while inserting to table backup_repos")
+            print("Error while creating a sqlite table", error)
+        finally:
+            if (sqliteConnection):
+                sqliteConnection.close()
+                print("sqlite connection is closed")
+
 
     def update_frequency_master_repos(self, id, frequency):
         try:
