@@ -16,6 +16,7 @@ export class AddBackupComponent implements OnInit {
   @ViewChild('url', {static: false}) url: ElementRef;
   @ViewChild('login', {static: false}) login: ElementRef;
   @ViewChild('password', {static: false}) password: ElementRef;
+  @ViewChild('frequency', {static: false}) frequency: ElementRef;
 
   backupForm: FormGroup;
   currentRepo: RepoModel;
@@ -24,7 +25,6 @@ export class AddBackupComponent implements OnInit {
 
   constructor(private router: Router, private repoService: RepoService) {
     this.currentRepo = this.router.getCurrentNavigation().extras.state?.repo;
-    console.log(this.currentRepo);
     this.allBackups = this.currentRepo.backups;
   }
 
@@ -43,16 +43,15 @@ export class AddBackupComponent implements OnInit {
     }
 
     const {url, login, password} = this.backupForm.value;
-    console.log("form value", this.backupForm.value);
     const newBackup = new BackupModel(url, login, password);
     this.allBackups.push(newBackup);
     this.newBackups.push(newBackup);
-    console.log(this.newBackups);
     this.clearForm();
   }
 
   onSubmit() {
-    this.repoService.modifyRepo(this.currentRepo.id, this.newBackups);
+    const newFrequency = parseInt(this.frequency.nativeElement.value);
+    this.repoService.modifyRepo(this.currentRepo.id, this.newBackups, newFrequency);
     this.router.navigateByUrl('/');
   }
 

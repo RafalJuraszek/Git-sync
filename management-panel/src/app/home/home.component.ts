@@ -32,7 +32,8 @@ export class HomeComponent implements OnInit {
       'rakoczy',
       'password123',
       '/path/to/rakoczy/repo',
-      backupsArray1
+      backupsArray1,
+      3
     );
     const mockRepo2 = new RepoModel(
       'MyRepo',
@@ -40,9 +41,11 @@ export class HomeComponent implements OnInit {
       'me',
       'me123',
       '/path/to/my/repo',
-      backupsArray2
+      backupsArray2,
+      2
     );
     this.repos.push(mockRepo1, mockRepo2);
+    console.log(this.repos);
   }
 
   checkRepo(repo) {

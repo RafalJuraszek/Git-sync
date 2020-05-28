@@ -38,7 +38,7 @@ export class RepoService {
     return this.http.post(`${this.basicApiUrl}notify`, {id});
   }
 
-  modifyRepo(repoId: string, backups: BackupModel[], frequency?: number): Observable<any> {
+  modifyRepo(repoId: string, backups: BackupModel[], frequency: number): Observable<any> {
     const options = {headers: new HttpHeaders({'Content-Type':  'application/json'})};
     const body = {
       id: repoId,

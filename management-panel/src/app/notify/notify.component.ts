@@ -40,14 +40,16 @@ export class NotifyComponent implements OnInit {
       'rakoczy',
       'password123',
       '/path/to/rakoczy/repo',
-      null
+      [],
+      10
     );
     const mockRepo2 = new RepoModel('MyRepo',
       'anyUrl2',
       'me',
       'me123',
       '/path/to/my/repo',
-      null
+      [],
+      10
     );
     this.repos.push(mockRepo1, mockRepo2);
   }

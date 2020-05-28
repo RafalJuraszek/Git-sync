@@ -1,0 +1,6 @@
+INSERT INTO master_repos
+                          (id, url, login, password, path, frequency)
+                           VALUES
+                          ("kbiess", "wwwws", "kkkks", "shsshhss", "psathhh", 3)
+
+select * from master_repos

@@ -43,14 +43,16 @@ export class AddRepoComponent implements OnInit {
       'rakoczy',
       'password123',
       '/path/to/rakoczy/repo',
-      null
+      [],
+      2
     );
     const mockRepo2 = new RepoModel('MyRepo',
       'anyUrl2',
       'me',
       'me123',
       '/path/to/my/repo',
-      null
+      [],
+      2
     );
     this.repoService.repos.push(mockRepo1, mockRepo2);
 
@@ -59,7 +61,8 @@ export class AddRepoComponent implements OnInit {
       url: new FormControl(null),
       password: new FormControl(null),
       login: new FormControl(null),
-      path: new FormControl(null)
+      path: new FormControl(null),
+      frequency: new FormControl(null)
     });
 
     this.ipc.on('selected-dir', (event, arg) => {
@@ -73,13 +76,13 @@ export class AddRepoComponent implements OnInit {
   }
 
   submit() {
-    const {id, url, login, password, path} = this.repoForm.value;
+    const {id, url, login, password, path, frequency} = this.repoForm.value;
     if (this.repoService.repos.map(repo => repo.id).includes(id)) {
       window.alert("Repository with given ID already exist!");
       return;
     }
 
-    const resultRepo = new RepoModel(id, url, login, password, path, this.backups);
+    const resultRepo = new RepoModel(id, url, login, password, path, this.backups, frequency);
     this.repoService.postRepo(resultRepo);
     this.router.navigateByUrl('/');
   }
