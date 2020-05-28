@@ -1,5 +1,5 @@
 from server.db.database_handler import ReposDatabaseHandler
-
+print('test')
 repos_db = ReposDatabaseHandler()
 sql_create_master_repos_table = """ CREATE TABLE IF NOT EXISTS master_repos (
                                                 id text PRIMARY KEY,
