@@ -134,12 +134,20 @@ class ReposDatabaseHandler:
                           (id, url, login, password, path, frequency) 
                            VALUES 
                           (?, ?, ?, ?, ?, ?)"""
+            print("DEBUG I 1")
             data_tuple = (id, url, login, password, path, frequency)
+            print("DEBUG I 2")
+
             self.cursor.execute(insert_query, data_tuple)
+            print("DEBUG I 3")
+
             self.connection.commit()
+            print("DEBUG I 4")
+
         except sqlite3.Error as error:
             print("Error while inserting to table master_repos")
-
+            print(error)
+            print(error.__traceback__)
 
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
         try:
