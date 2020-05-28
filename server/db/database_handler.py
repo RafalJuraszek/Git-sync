@@ -5,7 +5,7 @@ class EmailsDatabaseHandler:
 
     def __init__(self) -> None:
         try:
-            self.connection = sqlite3.connect('database.db')
+            self.connection = sqlite3.connect('database_all.db')
             self.cursor = self.connection.cursor()
         except sqlite3.Error as error:
             print("Error while connecting to sqlite", error)
@@ -20,7 +20,7 @@ class EmailsDatabaseHandler:
             table_query = """CREATE TABLE IF NOT EXISTS emails_repos (ID INTEGER PRIMARY KEY AUTOINCREMENT,
                                                                 name TEXT NOT NULL,
                                                                 master_repo_id TEXT NOT NULL,
-                                                                FOREIGN KEY (master_repo_id) REFERENCES master_repos (id) ON DELETE CASCADE,
+                                                                FOREIGN KEY (master_repo_id) REFERENCES masterRepos (id) ON DELETE CASCADE,
                                                                 FOREIGN KEY (name) REFERENCES emails (name) ON DELETE CASCADE
                                                                 )"""
             self.cursor.execute(table_query)
@@ -33,7 +33,7 @@ class EmailsDatabaseHandler:
             select_query = """SELECT e.email, e.name, mr.id
                         from emails as e 
                         inner join emails_repos as er on e.name = er.name
-                        inner join master_repos as mr on er.master_repo_id = mr.id"""
+                        inner join masterRepos as mr on er.master_repo_id = mr.id"""
             self.cursor.execute(select_query)
             records = self.cursor.fetchall()
             names = []
@@ -52,7 +52,7 @@ class EmailsDatabaseHandler:
             select_query = """SELECT e.email, e.name
                         from emails as e 
                         inner join emails_repos as er on e.name = er.name
-                        inner join master_repos as mr on er.master_repo_id = mr.id
+                        inner join masterRepos as mr on er.master_repo_id = mr.id
                         WHERE mr.id = ?"""
             self.cursor.execute(select_query, (master_repo_id, ))
             records = self.cursor.fetchall()
@@ -92,21 +92,85 @@ class EmailsDatabaseHandler:
 class ReposDatabaseHandler:
     def __init__(self) -> None:
         try:
-            self.connection = sqlite3.connect('database.db')
+            self.connection = sqlite3.connect('database_all.db')
             self.cursor = self.connection.cursor()
         except sqlite3.Error as error:
             print("Error while connecting to sqlite", error)
 
     def create_master_repos_and_backup_repos_tables(self):
         try:
-            sql_create_master_repos_table = """ CREATE TABLE IF NOT EXISTS master_repos (
-                                                id text PRIMARY KEY,
-                                                url text NOT NULL,
-                                                login text NOT NULL,
-                                                password text NOT NULL,
-                                                path NOT NULL UNIQUE,
-                                                frequency integer NOT NULL
-                                            ); """
+            try:
+                sqliteConnection = sqlite3.connect('database_all.db')
+                sqlite_create_table_query = ''' CREATE TABLE IF NOT EXISTS masterRepos (
+                                                            id text PRIMARY KEY,
+                                                            url text NOT NULL,
+                                                            login text NOT NULL,
+                                                            password text NOT NULL,
+                                                            path NOT NULL UNIQUE,
+                                                            frequency integer NOT NULL
+                                                        ); '''
+
+                cursor = sqliteConnection.cursor()
+                print("Successfully Connected to SQLite")
+                cursor.execute(sqlite_create_table_query)
+                sqliteConnection.commit()
+                print("SQLite table created")
+
+                cursor.close()
+
+            except sqlite3.Error as error:
+                print("Error while creating a sqlite table", error)
+            finally:
+                if (sqliteConnection):
+                    sqliteConnection.close()
+                    print("sqlite connection is closed")
+
+
+            try:
+                sqliteConnection = sqlite3.connect('database_all.db')
+                sqlite_create_table_query = '''CREATE TABLE IF NOT EXISTS backupRepos (
+                                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                            master_repo_id text NOT NULL,
+                                            url text NOT NULL,
+                                            login text NOT NULL,
+                                            password text NOT NULL,
+                                            FOREIGN KEY (master_repo_id) REFERENCES masterRepos (id) ON DELETE CASCADE,
+                                            UNIQUE(master_repo_id, url)
+                                        );'''
+
+                cursor = sqliteConnection.cursor()
+                print("Successfully Connected to SQLite")
+                cursor.execute(sqlite_create_table_query)
+                sqliteConnection.commit()
+                print("SQLite table created")
+
+                cursor.close()
+
+            except sqlite3.Error as error:
+                print("Error while creating a sqlite table", error)
+            finally:
+                if (sqliteConnection):
+                    sqliteConnection.close()
+                    print("sqlite connection is closed")
+
+
+
+
+            # sql_create_master_repos_table = """ CREATE TABLE IF NOT EXISTS master_repos (
+            #                                     id text PRIMARY KEY,
+            #                                     url text NOT NULL,
+            #                                     login text NOT NULL,
+            #                                     password text NOT NULL,
+            #                                     path NOT NULL UNIQUE,
+            #                                     frequency integer NOT NULL
+            #                                 ); """
+            #
+            #
+            #
+            # self.cursor.execute(sql_create_master_repos_table)
+            # self.connection.commit()
+
+
 
             sql_create_backup_repos_table = """CREATE TABLE IF NOT EXISTS backup_repos (
                                             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -117,9 +181,6 @@ class ReposDatabaseHandler:
                                             FOREIGN KEY (master_repo_id) REFERENCES master_repos (id) ON DELETE CASCADE,
                                             UNIQUE(master_repo_id, url)
                                         );"""
-
-            self.cursor.execute(sql_create_master_repos_table)
-            self.connection.commit()
             self.cursor.execute(sql_create_backup_repos_table)
             self.connection.commit()
             print("SQLite table created")
@@ -130,24 +191,55 @@ class ReposDatabaseHandler:
 
     def insert_data_master_repos(self, id, url, login, password, path, frequency):
         try:
-            insert_query = """INSERT INTO master_repos
-                          (id, url, login, password, path, frequency) 
-                           VALUES 
-                          (?, ?, ?, ?, ?, ?)"""
-            print("DEBUG I 1")
-            data_tuple = (id, url, login, password, path, frequency)
-            print("DEBUG I 2")
+            sqliteConnection = sqlite3.connect('database_all.db')
+            sqlite_create_table_query = ''' CREATE TABLE IF NOT EXISTS masterRepos (
+                                                        id text PRIMARY KEY,
+                                                        url text NOT NULL,
+                                                        login text NOT NULL,
+                                                        password text NOT NULL,
+                                                        path NOT NULL UNIQUE,
+                                                        frequency integer NOT NULL
+                                                    ); '''
 
-            self.cursor.execute(insert_query, data_tuple)
-            print("DEBUG I 3")
+            cursor = sqliteConnection.cursor()
+            print("Successfully Connected to SQLite")
+            cursor.execute(sqlite_create_table_query)
+            sqliteConnection.commit()
+            print("SQLite table created")
 
-            self.connection.commit()
-            print("DEBUG I 4")
+            cursor.close()
 
         except sqlite3.Error as error:
-            print("Error while inserting to table master_repos")
-            print(error)
-            print(error.__traceback__)
+            print("Error while creating a sqlite table", error)
+        finally:
+            if (sqliteConnection):
+                sqliteConnection.close()
+                print("sqlite connection is closed")
+        # try:
+        #     insert_query = """INSERT INTO master_repos
+        #                   (id, url, login, password, path, frequency)
+        #                    VALUES
+        #                   (?, ?, ?, ?, ?, ?)"""
+        #
+        #
+        #     print("DEBUG I 1")
+        #     data_tuple = (id, url, login, password, path, frequency)
+        #     print("DEBUG I 2")
+        #
+        #     self.cursor.execute(insert_query, data_tuple)
+        #     print("DEBUG I 3")
+        #
+        #     self.connection.commit()
+        #     print("DEBUG I 4")
+        #
+        # except sqlite3.Error as error:
+        #     print("Error while inserting to table master_repos")
+        #     print(error)
+        #     print(error.__traceback__)
+        #
+
+
+
 
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
         try:
