@@ -12,18 +12,17 @@ import {NotifyComponent} from './notify/notify.component';
 import {FileUploadModule} from 'primeng/fileupload';
 import {AddRepoComponent} from './add-repo/add-repo.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { AddBackupComponent } from './add-backup/add-backup.component';
 
 const appRoutes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'addRepo', component: AddRepoComponent},
-    {path: 'notify', component: NotifyComponent}
-    // {path: 'users', component: UsersComponent },
-    // {path: 'users/:id/:name', component: UsersComponent },
-    // {path: 'servers', component: ServersComponent }
+    {path: 'notify', component: NotifyComponent},
+    {path: 'addBackup', component: AddBackupComponent}
 ];
 
 @NgModule({
-    declarations: [AppComponent, HomeComponent, AddRepoComponent, NotifyComponent],
+    declarations: [AppComponent, HomeComponent, AddRepoComponent, NotifyComponent, AddBackupComponent],
     imports: [
         BrowserModule,
         HttpClientModule,

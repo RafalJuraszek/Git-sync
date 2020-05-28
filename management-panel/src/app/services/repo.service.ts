@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {RepoModel} from '../model/repo.model';
 import {tap} from 'rxjs/operators';
+import {BackupModel} from "../model/backup.model";
 
 
 @Injectable()
@@ -22,14 +23,12 @@ export class RepoService {
     }));
   }
 
-
   postRepo(repo) {
 
     this.http.post(this.basicApiUrl + 'addRepo', repo).subscribe(data => {
       this.repos.push(repo);
     });
   }
-
 
   deleteRepo(repo): Observable<any> {
     return this.http.delete(this.basicApiUrl + 'repos/' + repo.id);
@@ -39,5 +38,22 @@ export class RepoService {
     return this.http.post(`${this.basicApiUrl}notify`, {id});
   }
 
+  modifyRepo(repoId: string, backups: BackupModel[], frequency?: number): Observable<any> {
+    const options = {headers: new HttpHeaders({'Content-Type':  'application/json'})};
+    const body = {
+      id: repoId,
+      backups,
+      frequency
+    };
+    return this.http.put(`${this.basicApiUrl}modifyRepo`, body, options);
+  }
+
+  deleteBackup(repoId: string, backupUrl: string): Observable<any> {
+    const options = {
+      headers: new HttpHeaders({'Content-Type': 'application/json'}),
+      body: {url: backupUrl},
+    };
+    return this.http.delete(`${this.basicApiUrl}repos/${repoId}`, options);
+  }
 }
 

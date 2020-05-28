@@ -19,7 +19,6 @@ export class NotifyComponent implements OnInit {
   private ipc: IpcRenderer;
 
   constructor(private router: Router, private repoService: RepoService) {
-    console.log(this.router.getCurrentNavigation().extras.state)
     if ((<any>window).require) {
       try {
         this.ipc = (<any>window).require('electron').ipcRenderer;
@@ -45,12 +44,11 @@ export class NotifyComponent implements OnInit {
     );
     const mockRepo2 = new RepoModel('MyRepo',
       'anyUrl2',
-      'benny',
-      'benny123',
+      'me',
+      'me123',
       '/path/to/my/repo',
       null
     );
-
     this.repos.push(mockRepo1, mockRepo2);
   }
 

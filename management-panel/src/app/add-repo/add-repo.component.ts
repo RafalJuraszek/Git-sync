@@ -24,12 +24,9 @@ export class AddRepoComponent implements OnInit {
   backups: BackupModel[] = [];
 
   constructor(private router: Router, private repoService: RepoService) {
-    console.log(this.router.getCurrentNavigation().extras.state)
     if ((<any> window).require) {
       try {
         this.ipc = (<any> window).require('electron').ipcRenderer;
-
-
       } catch (e) {
         throw e;
       }
@@ -39,6 +36,24 @@ export class AddRepoComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // to refactor during integration with backend
+    const mockRepo1 = new RepoModel(
+      'RakoczyRepo',
+      'anyUrl1',
+      'rakoczy',
+      'password123',
+      '/path/to/rakoczy/repo',
+      null
+    );
+    const mockRepo2 = new RepoModel('MyRepo',
+      'anyUrl2',
+      'me',
+      'me123',
+      '/path/to/my/repo',
+      null
+    );
+    this.repoService.repos.push(mockRepo1, mockRepo2);
+
     this.repoForm = new FormGroup({
       id: new FormControl(null),
       url: new FormControl(null),
@@ -55,31 +70,30 @@ export class AddRepoComponent implements OnInit {
 
   pickPath() {
     this.ipc.send('open-file-dialog-for-dir');
-
   }
 
-  submit(){
-
-    const id = this.repoForm.value.id;
-    const url = this.repoForm.value.url;
-    const login = this.repoForm.value.login;
-    const password = this.repoForm.value.password;
-    const path = this.repoForm.value.path;
+  submit() {
+    const {id, url, login, password, path} = this.repoForm.value;
+    if (this.repoService.repos.map(repo => repo.id).includes(id)) {
+      window.alert("Repository with given ID already exist!");
+      return;
+    }
 
     const resultRepo = new RepoModel(id, url, login, password, path, this.backups);
-
     this.repoService.postRepo(resultRepo);
     this.router.navigateByUrl('/');
-
   }
 
   addBackup() {
+    if (this.backups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
+      window.alert("Backup with given url already exist!");
+      return;
+    }
+
     const backupUrl = this.url.nativeElement.value;
     const backupLogin = this.login.nativeElement.value;
     const backupPassword = this.password.nativeElement.value;
     const newBackup = new BackupModel(backupUrl, backupLogin, backupPassword);
     this.backups.push(newBackup);
   }
-
-
 }

@@ -1,5 +1,5 @@
 export class BackupModel {
 
-  constructor(private url: string, private login: string, private password: string) {
+  constructor(public url: string, private login: string, private password: string) {
   }
 }

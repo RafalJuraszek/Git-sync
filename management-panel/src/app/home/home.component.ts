@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {RepoService} from '../services/repo.service';
 import {RepoModel} from '../model/repo.model';
+import {BackupModel} from "../model/backup.model";
 
 @Component({
   selector: 'app-home',
@@ -20,12 +21,32 @@ export class HomeComponent implements OnInit {
       console.log(repos);
       this.repos = repos;
     });
-    //to tylko symuluje ze cos dostalismy, bo nie mam backendu
-    //this.repos.push(new RepoModel('1', 'url', 'rafal', 'elo', 'c', null));
+
+    // to refactor during integration with backend
+    const backupsArray1: BackupModel[] = [];
+    const backupsArray2: BackupModel[] = [new BackupModel("url123", "logininin", "haselko")];
+
+    const mockRepo1 = new RepoModel(
+      'RakoczyRepo',
+      'anyUrl1',
+      'rakoczy',
+      'password123',
+      '/path/to/rakoczy/repo',
+      backupsArray1
+    );
+    const mockRepo2 = new RepoModel(
+      'MyRepo',
+      'anyUrl2',
+      'me',
+      'me123',
+      '/path/to/my/repo',
+      backupsArray2
+    );
+    this.repos.push(mockRepo1, mockRepo2);
   }
 
   checkRepo(repo) {
-    this.router.navigateByUrl('/addRepo', {state: {repo: repo}});
+    this.router.navigateByUrl('/addBackup', {state: {repo}});
   }
 
   add() {
