@@ -24,7 +24,7 @@ export class AddRepoComponent implements OnInit {
   backups: BackupModel[] = [];
 
   constructor(private router: Router, private repoService: RepoService) {
-    console.log(this.router.getCurrentNavigation().extras.state)
+    console.log(this.router.getCurrentNavigation().extras.state);
     if ((<any> window).require) {
       try {
         this.ipc = (<any> window).require('electron').ipcRenderer;
@@ -44,7 +44,8 @@ export class AddRepoComponent implements OnInit {
       url: new FormControl(null),
       password: new FormControl(null),
       login: new FormControl(null),
-      path: new FormControl(null)
+      path: new FormControl(null),
+      frequency: new FormControl(null)
     });
 
     this.ipc.on('selected-dir', (event, arg) => {
@@ -58,15 +59,16 @@ export class AddRepoComponent implements OnInit {
 
   }
 
-  submit(){
+  submit() {
 
     const id = this.repoForm.value.id;
     const url = this.repoForm.value.url;
     const login = this.repoForm.value.login;
     const password = this.repoForm.value.password;
     const path = this.repoForm.value.path;
+    const frequency = this.repoForm.value.frequency;
 
-    const resultRepo = new RepoModel(id, url, login, password, path, this.backups);
+    const resultRepo = new RepoModel(id, url, login, password, path, this.backups, frequency);
 
     this.repoService.postRepo(resultRepo);
     this.router.navigateByUrl('/');
