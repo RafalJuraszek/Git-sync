@@ -1,6 +1,8 @@
 Dear ${PERSON_NAME}, 
 
 This is a test message. 
-Have a great weekend! 
+Have a great weekend!
+
+${BACKUP_REPOS_LIST}
 
 Yours Truly
