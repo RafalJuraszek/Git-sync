@@ -105,7 +105,15 @@ def get_repos():
     all_repos = []
     repos_db = ReposDatabaseHandler()
 
-    ids, urls, logins, passwords, paths, frequencies = repos_db.get_master_repos()
+    tab = repos_db.get_master_repos()
+    ids = tab[0]
+    urls = tab[1]
+    logins= tab[2]
+    passwords= tab[3]
+    paths= tab[4]
+    frequencies= tab[4]
+
+
 
     for id, url, login, password, path, frequency in zip(ids, urls, logins, passwords, paths, frequencies):
         repo = {'id': id, 'url' : url, 'login' : login,
@@ -114,7 +122,7 @@ def get_repos():
         for url, login, password in zip(urls, logins, passwords):
             backup = {'url' : url, 'login' : login, 'password' : password}
             backup_repos.append(backup)
-        all_repos.add(repo)
+        all_repos.append(repo)
     repos_db.close()
 
     return jsonify(all_repos)

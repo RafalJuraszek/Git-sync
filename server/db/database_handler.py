@@ -276,7 +276,7 @@ class ReposDatabaseHandler:
 
     def get_master_repos(self):
         try:
-            select_query = """SELECT id, url, login, password, path, frequency from master_repos"""
+            select_query = """SELECT id, url, login, password, path, frequency from masterRepos"""
             self.cursor.execute(select_query)
             records = self.cursor.fetchall()
             ids = []
@@ -292,7 +292,9 @@ class ReposDatabaseHandler:
                 passwords.append(row[3])
                 paths.append(row[4])
                 frequency.append(row[5])
-            return ids, urls, logins, passwords, paths, frequency
+            print("get debug")
+            print(ids)
+            return [ids, urls, logins, passwords, paths, frequency]
         except sqlite3.Error as error:
             print("Error while selecting from table master_repos")
 
