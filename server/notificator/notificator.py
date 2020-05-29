@@ -41,6 +41,7 @@ def notify(master_repo_id):
     database.close()
     repos_db = ReposDatabaseHandler()
     urls, logins, passwords = repos_db.get_backup_repos(master_repo_id)
+    print("urls -> " + urls)
     repos_db.close()
     backups_list = ""
     for url in urls:

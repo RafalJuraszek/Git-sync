@@ -387,6 +387,7 @@ class ReposDatabaseHandler:
             logins = []
             passwords = []
             for row in records:
+                print("jakies backupy")
                 urls.append(row[0])
                 logins.append(row[1])
                 passwords.append(row[2])

@@ -29,11 +29,14 @@ class Scrapper:
             url = "https://api.github.com/users/" + login +"/events/public"
             user_stat = requests.get(url).json()
             for event in user_stat:
-                if event.get('type') == 'PushEvent':
-                    commits = event.get('payload').get('commits')
-                    email = commits[0].get('author').get('email')
-                    emails.update({login: email})
-                    break
+                try:
+                    if event.get('type') == 'PushEvent':
+                        commits = event.get('payload').get('commits')
+                        email = commits[0].get('author').get('email')
+                        emails.update({login: email})
+                        break
+                except Exception:
+                    pass
 
         contributors = requests.get("https://api.github.com/repos/" + user_and_repo_name + "/contributors").json()
         for c in contributors:

@@ -109,7 +109,7 @@ def get_repos():
     logins= tab[2]
     passwords= tab[3]
     paths= tab[4]
-    frequencies= tab[4]
+    frequencies= tab[5]
 
 
 
@@ -117,12 +117,16 @@ def get_repos():
         repo = {'id': id, 'url' : url, 'login' : login,
                 'password' : password, 'path' : path, 'frequency' : frequency}
         backup_repos = []
-        for url, login, password in zip(urls, logins, passwords):
+        urls_b, logins_b, passwords_b = repos_db.get_backup_repos(id)
+        print(urls_b)
+        print(logins_b)
+        for url, login, password in zip(urls_b, logins_b, passwords_b):
+            print("here")
             backup = {'url' : url, 'login' : login, 'password' : password}
             backup_repos.append(backup)
         all_repos.append(repo)
     repos_db.close()
-
+    print(all_repos)
     return jsonify(all_repos)
 
 @app.route("/api/repos/<id>", methods=['DELETE'])
