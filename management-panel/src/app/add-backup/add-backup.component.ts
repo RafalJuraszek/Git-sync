@@ -22,6 +22,7 @@ export class AddBackupComponent implements OnInit {
   currentRepo: RepoModel;
   allBackups: BackupModel[] = [];
   newBackups: BackupModel[] = [];
+  isFrequencyChanged: boolean = false;
 
   constructor(private router: Router, private repoService: RepoService) {
     this.currentRepo = this.router.getCurrentNavigation().extras.state?.repo;
@@ -49,10 +50,28 @@ export class AddBackupComponent implements OnInit {
     this.clearForm();
   }
 
+  deleteBackup(backup: BackupModel) {
+    this.removeBackup(this.allBackups, backup);
+
+    if (this.newBackups.includes(backup))
+      this.removeBackup(this.newBackups, backup);
+    else
+      this.repoService.deleteBackup(this.currentRepo.id, backup.url);
+  }
+
   onSubmit() {
     const newFrequency = parseInt(this.frequency.nativeElement.value);
     this.repoService.modifyRepo(this.currentRepo.id, this.newBackups, newFrequency);
     this.router.navigateByUrl('/');
+  }
+
+  onFrequencyChanged(e: Event) {
+    this.isFrequencyChanged = parseInt(e.target.value) !== this.currentRepo.frequency;
+  }
+
+  private removeBackup(array: Array<BackupModel>, element: BackupModel) {
+    const index = array.indexOf(element);
+    array.splice(index, 1);
   }
 
   private clearForm() {
