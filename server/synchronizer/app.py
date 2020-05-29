@@ -24,13 +24,11 @@ def get_test():
 
 @app.route("/api/addRepo", methods=['POST'])
 def add_repo():
-    print("debug -2")
+    print("add repo request")
     print(request)
     print(request.get_json())
     data = request.get_json()
-    print("debug -1")
     print(data)
-    # master_repo_json = data.get('master', None)
 
     frequency = data.get('frequency', None)
     backups_json = data.get('backups', None)
@@ -111,7 +109,7 @@ def get_repos():
     logins= tab[2]
     passwords= tab[3]
     paths= tab[4]
-    frequencies= tab[4]
+    frequencies= tab[5]
 
 
 
@@ -119,12 +117,16 @@ def get_repos():
         repo = {'id': id, 'url' : url, 'login' : login,
                 'password' : password, 'path' : path, 'frequency' : frequency}
         backup_repos = []
-        for url, login, password in zip(urls, logins, passwords):
+        urls_b, logins_b, passwords_b = repos_db.get_backup_repos(id)
+        print(urls_b)
+        print(logins_b)
+        for url, login, password in zip(urls_b, logins_b, passwords_b):
+            print("here")
             backup = {'url' : url, 'login' : login, 'password' : password}
             backup_repos.append(backup)
         all_repos.append(repo)
     repos_db.close()
-
+    print(all_repos)
     return jsonify(all_repos)
 
 @app.route("/api/repos/<id>", methods=['DELETE'])
@@ -133,11 +135,13 @@ def delete_repos(id):
     repos_db = ReposDatabaseHandler()
     print(id)
     # logika -> jak jest body z urlem to usuwamy tylko 1 konretny backup, jak bez body całe repo
-    url = data.get('url', None)
-    if url is None:
+    data = request.get_json()
+    print(data)
+    if data is None:
         print("delete master")
         repos_db.delete_master_repo(id)
     else:
+        url = data.get('url', None)
         print("delete " + url)
         repos_db.delete_backup_repo(master_repo_id=id, url = url)
 
@@ -150,10 +154,14 @@ def delete_repos(id):
     return response
 
 
-@app.route("/api/notify", methods=['PUT'])
+@app.route("/api/notify", methods=['POST'])
 def get_notify_data():
     data = request.get_json()
-    notify(data.get('id', None))
+    print("notify DEBUG")
+    print(data)
+    id = data.get('id', None)
+    print("DEBUG ID -> " + id)
+    notify(id)
     response = app.response_class(
         response=[],
         status=200,
