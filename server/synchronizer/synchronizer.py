@@ -49,7 +49,7 @@ class SyncRepository:
             self.add_remote(remote[1], remote[0])
 
     def generate_remote_name(self, remote: str):
-        return remote
+        return remote.replace('r','l')
 
     def pull(self, branch):
         self.localRepo.git.pull('--rebase')
