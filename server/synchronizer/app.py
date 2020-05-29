@@ -160,7 +160,11 @@ def get_notify_data():
     print("notify DEBUG")
     print(data)
     id = data.get('id', None)
-    print("DEBUG ID -> " + id)
+    #na ten moment nic nie przychodzi z frontu
+    if id is None:
+        print("sztuczne przypisanie")
+        id = 'dobry_url'
+    # print("DEBUG ID -> " + id)
     notify(id)
     response = app.response_class(
         response=[],
