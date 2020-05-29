@@ -1,5 +1,5 @@
 import os
-from asyncio import sleep
+from time import sleep
 from threading import Thread
 
 from git import Repo

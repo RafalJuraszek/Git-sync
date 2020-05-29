@@ -197,4 +197,5 @@ class MyEncoder(JSONEncoder):
 
 if __name__ == "__main__":
     print("start")
+    synchronizer.synchronize_all_repos()
     app.run(debug=True)
