@@ -6,8 +6,11 @@ from json import JSONEncoder
 from server.db.database_handler import ReposDatabaseHandler
 from flask import jsonify
 from server.notificator.notificator import notify
+from server.synchronizer.synchronizer import Synchronizer
+
 app = Flask(__name__)
 
+synchronizer = Synchronizer()
 
 @app.route("/api/testget", methods=['GET'])
 def get_test():
@@ -60,6 +63,14 @@ def add_repo():
                                      backup_repo.get('password', None))
 
     repos_db.close()
+
+    synchronizer.add_new_synchronization_thread(data.get('id', None),
+                                      data.get('url', None),
+                                      data.get('login', None),
+                                      data.get('password', None),
+                                      data.get('path', None),
+                                      frequency)
+
     # to jest tylko jak sie bawilem w tworzenie odpowiedzi, moze sie przyda
     array = []
     # array.append(Repo())
