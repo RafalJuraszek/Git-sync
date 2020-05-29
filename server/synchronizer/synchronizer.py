@@ -78,8 +78,9 @@ class Synchronizer:
         self.threads = []
 
     def synchronization_loop(self, repo_id, url, login, password, path, period):
-        while True:
-            try:
+        try:
+            while True:
+
                 start = datetime.now()
                 repos_db = ReposDatabaseHandler()
                 repo = SyncRepository()
@@ -94,8 +95,8 @@ class Synchronizer:
 
                 time_to_wait = period - (datetime.now() - start).total_seconds()
                 sleep(time_to_wait if time_to_wait > 0 else 0)
-            except Exception as e:
-                print(e)
+        except exc.NoSuchPathError as e:
+            log("No such path exception")
 
     def add_new_synchronization_thread(self, repo_id, url, login, password, path, period):
         t = Thread(target=self.synchronization_loop,

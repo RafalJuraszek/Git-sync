@@ -38,11 +38,11 @@ export class AddRepoComponent implements OnInit {
   ngOnInit(): void {
     // to refactor during integration with backend
     const mockRepo1 = new RepoModel(
-      'RakoczyRepo',
+      'RepoExample',
       'anyUrl1',
-      'rakoczy',
+      'loginss',
       'password123',
-      '/path/to/rakoczy/repo',
+      '/path/to/ex/repo',
       [],
       2
     );

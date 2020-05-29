@@ -65,7 +65,7 @@ export class AddBackupComponent implements OnInit {
     this.router.navigateByUrl('/');
   }
 
-  onFrequencyChanged(e: Event) {
+  onFrequencyChanged(e) {
     this.isFrequencyChanged = parseInt(e.target.value) !== this.currentRepo.frequency;
   }
 
