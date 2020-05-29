@@ -79,20 +79,23 @@ class Synchronizer:
 
     def synchronization_loop(self, repo_id, url, login, password, path, period):
         while True:
-            start = datetime.now()
-            repos_db = ReposDatabaseHandler()
-            repo = SyncRepository()
             try:
-                repo.initialize(path)
-            except exc.InvalidGitRepositoryError:
-                repo.create(url, path)
-            remote_repos = repos_db.get_backup_repos(repo_id)
-            remotes = [('', url) for url in remote_repos[0]]  # [('bitbucket','https://bitbucket.org/IoTeamRak/test')]
-            repo.add_remotes(remotes)
-            repo.synchronize_all()
+                start = datetime.now()
+                repos_db = ReposDatabaseHandler()
+                repo = SyncRepository()
+                try:
+                    repo.initialize(path)
+                except exc.InvalidGitRepositoryError:
+                    repo.create(url, path)
+                remote_repos = repos_db.get_backup_repos(repo_id)
+                remotes = [('', url) for url in remote_repos[0]]  # [('bitbucket','https://bitbucket.org/IoTeamRak/test')]
+                repo.add_remotes(remotes)
+                repo.synchronize_all()
 
-            time_to_wait = period - (datetime.now() - start).total_seconds()
-            sleep(time_to_wait if time_to_wait > 0 else 0)
+                time_to_wait = period - (datetime.now() - start).total_seconds()
+                sleep(time_to_wait if time_to_wait > 0 else 0)
+            except Exception as e:
+                print(e)
 
     def add_new_synchronization_thread(self, repo_id, url, login, password, path, period):
         t = Thread(target=self.synchronization_loop,
