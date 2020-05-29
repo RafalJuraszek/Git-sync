@@ -100,7 +100,7 @@ export class AddRepoComponent implements OnInit {
     this.backups.push(newBackup);
     this.clearBackup()
   }
-  
+
   private clearBackup() {
     this.url.nativeElement.value = "";
     this.login.nativeElement.value = "";

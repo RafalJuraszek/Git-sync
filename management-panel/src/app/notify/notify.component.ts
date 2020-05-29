@@ -57,9 +57,9 @@ export class NotifyComponent implements OnInit {
   notify() {
     if (this.selectedValue === undefined) return;
     this.resetFlags();
-
+    
     // should work after integration with backend
-    this.repoService.notify(this.selectedValue.id).subscribe((data: Response) => {
+    this.repoService.notify(this.selectedValue).subscribe((data: Response) => {
       this.isNotificationSentSuccessfully = true;
       const repoWithSentNotification: RepoModel = this.repos.find(repo => repo.id === this.selectedValue);
       const index: number = this.repos.indexOf(repoWithSentNotification);
