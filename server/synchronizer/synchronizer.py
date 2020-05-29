@@ -39,10 +39,11 @@ class SyncRepository:
             log(e)
 
     def add_remotes(self, remotes):
+        """@remotes:param  - list of tuples (remote_name, url)"""
         for remote in remotes:
-            self.add_remote(remote, self.generate_remote_name(remote))
+            self.add_remote(remote[1], remote[0])
 
-    def generate_remote_name(self, remote:str):
+    def generate_remote_name(self, remote: str):
         return remote
 
     def pull(self, branch):
@@ -83,6 +84,8 @@ def synchronization_loop(period, start: datetime):
             except exc.InvalidGitRepositoryError:
                 url = 'https://'  # here we need db data
                 repo.create(url, local_repos)
+            remotes = [('bitbucket','https://bitbucket.org/IoTeamRak/test')]
+            repo.add_remotes(remotes)
             repo.synchronize_all()
         time_to_wait = period - (datetime.now() - start).total_seconds()
         sleep(time_to_wait if time_to_wait > 0 else 0)
