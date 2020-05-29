@@ -24,13 +24,11 @@ def get_test():
 
 @app.route("/api/addRepo", methods=['POST'])
 def add_repo():
-    print("debug -2")
+    print("add repo request")
     print(request)
     print(request.get_json())
     data = request.get_json()
-    print("debug -1")
     print(data)
-    # master_repo_json = data.get('master', None)
 
     frequency = data.get('frequency', None)
     backups_json = data.get('backups', None)
@@ -133,11 +131,13 @@ def delete_repos(id):
     repos_db = ReposDatabaseHandler()
     print(id)
     # logika -> jak jest body z urlem to usuwamy tylko 1 konretny backup, jak bez body całe repo
-    url = data.get('url', None)
-    if url is None:
+    data = request.get_json()
+    print(data)
+    if data is None:
         print("delete master")
         repos_db.delete_master_repo(id)
     else:
+        url = data.get('url', None)
         print("delete " + url)
         repos_db.delete_backup_repo(master_repo_id=id, url = url)
 

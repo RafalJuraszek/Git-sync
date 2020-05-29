@@ -321,6 +321,7 @@ class ReposDatabaseHandler:
             print("delete master debug")
             print(delete_query)
             self.cursor.execute(delete_query,(master_repo_id, ))
+            self.connection.commit()
         except sqlite3.Error as error:
             print("Error while deleting from table master_repos")
             print(error)
@@ -329,6 +330,7 @@ class ReposDatabaseHandler:
         try:
             delete_query = """DELETE FROM backupRepos WHERE master_repo_id = ? AND url = ?"""
             self.cursor.execute(delete_query,(master_repo_id, url))
+            self.connection.commit()
         except sqlite3.Error as error:
             print("Error while deleting from table backup_repos")
             print(error)
