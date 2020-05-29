@@ -150,10 +150,14 @@ def delete_repos(id):
     return response
 
 
-@app.route("/api/notify", methods=['PUT'])
+@app.route("/api/notify", methods=['POST'])
 def get_notify_data():
     data = request.get_json()
-    notify(data.get('id', None))
+    print("notify DEBUG")
+    print(data)
+    id = data.get('id', None)
+    print("DEBUG ID -> " + id)
+    notify(id)
     response = app.response_class(
         response=[],
         status=200,

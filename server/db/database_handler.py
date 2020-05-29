@@ -66,24 +66,86 @@ class EmailsDatabaseHandler:
             print("Error while selecting from table ")
 
 
-    def insert_data(self, email, name, master_repo_id):
+    def insert_data_to_email(self, name, email):
         try:
-            insert_query = """INSERT INTO emails
-                          (name, email) 
-                           VALUES 
-                          (?,?)"""
-            data_tuple = (name, email)
-            self.cursor.execute(insert_query, data_tuple)
-            self.connection.commit()
-            insert_query = """INSERT INTO emails_repos
-                          (name, master_repo_id) 
-                           VALUES 
-                          (?,?)"""
-            data_tuple = (name, master_repo_id)
-            self.cursor.execute(insert_query, data_tuple)
-            self.connection.commit()
+            sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
+            cursor = sqliteConnection.cursor()
+            print("Connected to SQLite")
+            select =  """SELECT  *
+                        FROM    emails 
+                        WHERE   name = ?"""
+
+            self.cursor.execute(select, (name, ))
+            records = self.cursor.fetchall()
+            if len(records) == 0:
+                sqlite_insert_with_param = """
+                            INSERT INTO emails
+                                  (name, email) 
+                                   VALUES 
+                                  (?, ?)
+                        """
+
+                data_tuple = (name, email)
+                cursor.execute(sqlite_insert_with_param, data_tuple)
+                sqliteConnection.commit()
+                print("Insert or not to emails")
         except sqlite3.Error as error:
-            print("Error while inserting to table ")
+            print("Error while inserting to emails", error)
+        finally:
+            if (sqliteConnection):
+                sqliteConnection.close()
+                print("sqlite connection is closed")
+
+
+
+    def insert_data_to_email_repos(self, name, master_repo_id):
+        try:
+            sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
+            cursor = sqliteConnection.cursor()
+            print("Connected to SQLite")
+
+            select = """SELECT  *
+                        FROM    emails_repos 
+                        WHERE   name = ? AND master_repo_id = ?"""
+            self.cursor.execute(select, (name, master_repo_id ))
+            records = self.cursor.fetchall()
+            if len(records) == 0:
+                sqlite_insert_with_param = """
+                            INSERT INTO emails_repos
+                                  (name, master_repo_id) 
+                                   VALUES 
+                                  (?, ?)
+                        """
+
+                data_tuple = (name, master_repo_id)
+                cursor.execute(sqlite_insert_with_param, data_tuple)
+                sqliteConnection.commit()
+                print("Insert or not to emails")
+        except sqlite3.Error as error:
+            print("Error while creating a sqlite table", error)
+        finally:
+            if (sqliteConnection):
+                sqliteConnection.close()
+                print("sqlite connection is closed")
+    #  zle
+    # def insert_data(self, email, name, master_repo_id):
+    #     try:
+    #         insert_query = """INSERT INTO emails
+    #                       (name, email)
+    #                        VALUES
+    #                       (?,?)"""
+    #         data_tuple = (name, email)
+    #         self.cursor.execute(insert_query, data_tuple)
+    #         self.connection.commit()
+    #         insert_query = """INSERT INTO emails_repos
+    #                       (name, master_repo_id)
+    #                        VALUES
+    #                       (?,?)"""
+    #         data_tuple = (name, master_repo_id)
+    #         self.cursor.execute(insert_query, data_tuple)
+    #         self.connection.commit()
+    #     except sqlite3.Error as error:
+    #         print("Error while inserting to table ")
     def close(self):
         self.cursor.close()
         self.connection.close()
@@ -295,6 +357,24 @@ class ReposDatabaseHandler:
             print("get debug")
             print(ids)
             return [ids, urls, logins, passwords, paths, frequency]
+        except sqlite3.Error as error:
+            print("Error while selecting from table master_repos")
+
+
+
+
+    def get_master_repo_url(self, id):
+        try:
+            select_query = """SELECT url from masterRepos where id = ?"""
+            self.cursor.execute(select_query,(id, ))
+            records = self.cursor.fetchall()
+            print("records" + str(records))
+            urls = []
+
+            for row in records:
+                urls.append(row[0])
+            url = urls[0]
+            return url
         except sqlite3.Error as error:
             print("Error while selecting from table master_repos")
 

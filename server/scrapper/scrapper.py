@@ -1,9 +1,11 @@
 import json
 import requests
+from server.db.database_handler import EmailsDatabaseHandler
 
 class Scrapper:
-    def __init__(self, repo_url):
+    def __init__(self, repo_url, master_repo_id):
         self.repo_url = repo_url
+        self.master_repo_id = master_repo_id
 
     def scrap_associated(self):
         # docelowo możemy pobierać już gotowy słownik i tylko do aktualizować
@@ -48,5 +50,11 @@ class Scrapper:
                     break
 
         print(emails)
+        emails_db = EmailsDatabaseHandler()
+        for name, email in emails.items():
+            emails_db.insert_data_to_email(name, email)
+            emails_db.insert_data_to_email_repos(name,self.master_repo_id )
+        emails_db.close()
         return emails
+
 
