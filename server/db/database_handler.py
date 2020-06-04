@@ -390,7 +390,7 @@ class ReposDatabaseHandler:
 
     def get_backup_repos(self, master_repo_id):
         try:
-            select_query = """SELECT url, login, password from backup_repos WHERE master_repo_id = ?"""
+            select_query = """SELECT url, login, password from backupRepos WHERE master_repo_id = ?"""
             self.cursor.execute(select_query,(master_repo_id, ))
             records = self.cursor.fetchall()
             urls = []
@@ -401,9 +401,14 @@ class ReposDatabaseHandler:
                 urls.append(row[0])
                 logins.append(row[1])
                 passwords.append(row[2])
+
+            print("DEBUG BACKUP SELECT")
+            print(urls)
+            print(logins)
+            print(passwords)
             return urls, logins, passwords
         except sqlite3.Error as error:
-            print("Error while selecting from table backup_repos")
+            print("Error while selecting from table backup_repos -> " + str(error))
 
 
     def delete_master_repo(self, master_repo_id):
