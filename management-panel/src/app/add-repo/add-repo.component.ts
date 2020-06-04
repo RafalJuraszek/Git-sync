@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {IpcRenderer} from 'electron';
 import {BackupModel} from '../model/backup.model';
@@ -25,7 +25,7 @@ export class AddRepoComponent implements OnInit {
   validPath = true;
   running = false;
 
-  constructor(private router: Router, private repoService: RepoService) {
+  constructor(private router: Router, private repoService: RepoService, private changer: ChangeDetectorRef ) {
     if ((<any> window).require) {
       try {
         this.ipc = (<any> window).require('electron').ipcRenderer;
@@ -76,9 +76,11 @@ export class AddRepoComponent implements OnInit {
         this.selectedDir = arg.toString();
       }
       this.running = false;
+      this.changer.detectChanges();
     });
     this.ipc.on('error', (event, arg) => {
       this.running = false;
+      this.changer.detectChanges();
     });
   }
 
