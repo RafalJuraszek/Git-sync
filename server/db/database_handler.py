@@ -1,5 +1,6 @@
 import sqlite3
 from server.db.database_localizator import DBLocation
+from server.db.error_messages_for_user import *
 
 class EmailsDatabaseHandler:
 
@@ -252,6 +253,7 @@ class ReposDatabaseHandler:
 
 
     def insert_data_master_repos(self, id, url, login, password, path, frequency):
+        return_message = "ok"
         try:
             sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
             cursor = sqliteConnection.cursor()
@@ -268,16 +270,20 @@ class ReposDatabaseHandler:
             print("Python Variables inserted successfully into SqliteDb_developers table")
         except sqlite3.Error as error:
             print("Error while creating a sqlite table", error)
+            return_message = master_repo_insert_error
         finally:
             if (sqliteConnection):
                 sqliteConnection.close()
                 print("sqlite connection is closed")
+                print(">>>>>>>>>>" + return_message)
+                return return_message
 
 
 
 
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
         try:
+            print(">>>>>>>>>>>>>>>>>> Dodawanie backupu")
             sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
             cursor = sqliteConnection.cursor()
             print("Connected to SQLite")
