@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "concurrently \"ng serve --proxy-config proxy.conf.json\" \"npm run electron\"",
-	"pack" : "electron-packager . --asar",
+	"pack" : "ng build && electron-packager . --asar",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
