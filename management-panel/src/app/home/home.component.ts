@@ -12,6 +12,7 @@ import {BackupModel} from "../model/backup.model";
 })
 export class HomeComponent implements OnInit {
   repos: RepoModel[] = [];
+  running = true;
 
   constructor(private router: Router, private repoService: RepoService) {
   }
@@ -20,6 +21,15 @@ export class HomeComponent implements OnInit {
     this.repoService.getRepos().subscribe((repos) => {
       console.log(repos);
       this.repos = repos;
+      this.running = false;
+    }, (error) => {
+      console.log(error);
+      if (error.status === 504) {
+        window.alert('Problem with connecting to the synchronizer');
+      } else {
+        window.alert(error.message);
+      }
+      this.running = false;
     });
 
     // to refactor during integration with backend

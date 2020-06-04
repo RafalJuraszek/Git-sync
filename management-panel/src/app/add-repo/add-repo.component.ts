@@ -25,7 +25,7 @@ export class AddRepoComponent implements OnInit {
   validPath = true;
   running = false;
 
-  constructor(private router: Router, private repoService: RepoService, private changer: ChangeDetectorRef ) {
+  constructor(private router: Router, private repoService: RepoService, private changer: ChangeDetectorRef) {
     if ((<any> window).require) {
       try {
         this.ipc = (<any> window).require('electron').ipcRenderer;
@@ -97,8 +97,17 @@ export class AddRepoComponent implements OnInit {
     }
 
     const resultRepo = new RepoModel(id, url, login, password, path, this.backups, frequency);
-    this.repoService.postRepo(resultRepo);
-    this.router.navigateByUrl('/');
+    this.repoService.postRepo(resultRepo).subscribe(data => {
+      this.router.navigateByUrl('/');
+    }, (error) => {
+      console.log(error);
+      if (error.status === 504) {
+        window.alert('Problem with connecting to the synchronizer');
+      } else {
+        window.alert(error.message);
+      }
+    });
+
   }
 
   addBackup() {

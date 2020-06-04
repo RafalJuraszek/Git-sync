@@ -19,7 +19,7 @@
       </div>
       <hr>
       <ul class="list-group">
-        <div  class="list-group-item clearfix" style="cursor: pointer"
+        <div class="list-group-item clearfix" style="cursor: pointer"
              *ngFor="let repo of repos"
         >
           <div class="pull-left" (click)="checkRepo(repo)">
@@ -30,6 +30,10 @@
         </div>
 
       </ul>
+
+      <mat-spinner class="center-block" diameter="100" style="margin-top: 10px;" color="warn"
+                   *ngIf="running"></mat-spinner>
+      
     </div>
   </div>
 </div>

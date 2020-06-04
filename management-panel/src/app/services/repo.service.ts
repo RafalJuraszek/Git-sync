@@ -23,11 +23,11 @@ export class RepoService {
     }));
   }
 
-  postRepo(repo) {
+  postRepo(repo): Observable<any> {
 
-    this.http.post(this.basicApiUrl + 'addRepo', repo).subscribe(data => {
+    return this.http.post(this.basicApiUrl + 'addRepo', repo).pipe(tap(data => {
       this.repos.push(repo);
-    });
+    }));
   }
 
   deleteRepo(repo): Observable<any> {
