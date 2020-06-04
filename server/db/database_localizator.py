@@ -4,9 +4,13 @@ import os
 
 class DBLocation:
     def __init__(self):
-        # self.home_sql_lite = expanduser("~") + "\\kbieniasz_tmp\\projects\\Git-sync\\gitSync.db"
-        self.home_sql_lite = expanduser("~") + "\\gitSync.db"
+        if expanduser("~") == "C:\\Users\\Lenovo":
+            self.home_sql_lite = expanduser("~") + "\\kbieniasz_tmp\\projects\\Git-sync\\gitSync.db"
+        else:
+            self.home_sql_lite = expanduser("~") + "\\gitSync.db"
 
 
 location = DBLocation()
 print(location.home_sql_lite)
+# if expanduser("~") == "C:\\Users\\Lenovo":
+#     print("ok")
