@@ -13,6 +13,7 @@ import {FileUploadModule} from 'primeng/fileupload';
 import {AddRepoComponent} from './add-repo/add-repo.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AddBackupComponent } from './add-backup/add-backup.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 const appRoutes: Routes = [
     {path: '', component: HomeComponent},
@@ -32,7 +33,8 @@ const appRoutes: Routes = [
         BrowserAnimationsModule,
         FileUploadModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+      MatProgressSpinnerModule
     ],
     providers: [],
     bootstrap: [AppComponent]

@@ -74,18 +74,22 @@ function isDirEmpty(dirname) {
 }
 
 ipcMain.on("open-file-dialog-for-dir", async event => {
-  const dir = await dialog.showOpenDialog({ properties: ["openDirectory"] });
-  
-  
-  if (dir) {
-	const files = await isDirEmpty(dir.filePaths[0])
-	
-	if(files.length===0) {
-		event.sender.send("selected-dir", dir.filePaths[0]);
-	}
-	else{
-		event.sender.send("selected-dir", "not-empty");
-	}
-    
+  try {
+    const dir = await dialog.showOpenDialog({properties: ["openDirectory"]});
+
+
+    if (dir) {
+      const files = await isDirEmpty(dir.filePaths[0])
+
+      if (files.length === 0) {
+        event.sender.send("selected-dir", dir.filePaths[0]);
+      } else {
+        event.sender.send("selected-dir", "not-empty");
+      }
+
+    }
+  }
+  catch(err) {
+    event.sender.send("error", "err");
   }
 });

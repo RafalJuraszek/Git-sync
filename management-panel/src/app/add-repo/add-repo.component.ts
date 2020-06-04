@@ -23,6 +23,7 @@ export class AddRepoComponent implements OnInit {
   selectedDir = '';
   backups: BackupModel[] = [];
   validPath = true;
+  running = false;
 
   constructor(private router: Router, private repoService: RepoService) {
     if ((<any> window).require) {
@@ -69,15 +70,20 @@ export class AddRepoComponent implements OnInit {
     this.ipc.on('selected-dir', (event, arg) => {
       console.log(arg);
       if (arg === 'not-empty') {
-          this.validPath = false;
+        this.validPath = false;
       } else {
         this.validPath = true;
         this.selectedDir = arg.toString();
       }
+      this.running = false;
+    });
+    this.ipc.on('error', (event, arg) => {
+      this.running = false;
     });
   }
 
   pickPath() {
+    this.running = true;
     this.ipc.send('open-file-dialog-for-dir');
   }
 
