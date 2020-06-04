@@ -33,7 +33,17 @@ class MockDb:
 
 
 def generate_remote_name(remote):
-    return remote.replace('/','_').replace(':', '-').replace('?', '_')
+    return remote.replace('/','_').replace(':', '-').replace('?', '__').replace('.','--')
+
+
+def remove_remote(local_path, remote_url):
+    try:
+        repo = Repo(local_path)
+        if not repo.bare:
+            repo.delete_remote(generate_remote_name(remote_url))
+    except Exception as e:
+        log("Exception while removing branch", 3)
+        log(e, 3)
 
 
 class SyncRepository:
@@ -81,7 +91,8 @@ class SyncRepository:
             self.add_remote(remote[0], remote[1], remote[2])
 
     def pull(self):
-        self.localRepo.git.pull('--rebase')
+        self.localRepo.git.fetch('--prune')
+        self.localRepo.git.rebase()
         self.localRepo.git.submodule('update', '--recursive')
 
     def pull_all(self):
@@ -100,11 +111,14 @@ class SyncRepository:
     def push_to_remotes(self):
         log(f'Pushing all')
         for remote, login, password in self.remotes:
-            p = password.replace('@', '%40')
-            url = next(remote.urls).split('//', 1)[1]
-            url = f'https://{login}:{p}@{url}'
+            url = self.get_remote_url(remote, login, password)
             log(f'Pushing all to {url}')
             self.localRepo.git.push(url, '--all', '--force')
+
+    def get_remote_url(self, remote, login, password):
+        p = password.replace('@', '%40')
+        url = next(remote.urls).split('//', 1)[1]
+        return f'https://{login}:{p}@{url}'
 
     def synchronize_all(self):
         # checkout to next branch
@@ -162,6 +176,7 @@ class Synchronizer:
         pass
 
 
+# remove_remote('C:\\Users\\Adrian\\Studia\\IoTest', 'https://bitbucket.org/IoTeamRak/test.git')
 s = Synchronizer()
 s.synchronize_all_repos()
 
