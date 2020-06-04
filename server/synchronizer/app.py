@@ -55,9 +55,9 @@ def add_repo():
                                                        data.get('path', None),
                                                        frequency)
 
-    print("db_communicate>>>>>>>>>> " + db_communicate)
+    # print("db_communicate>>>>>>>>>> " + db_communicate)
     if not db_communicate == "ok":
-        print("DEBUG>>>>>>>>>>")
+        # print("DEBUG>>>>>>>>>>")
         return send_400_db_error(db_communicate)
 
 
