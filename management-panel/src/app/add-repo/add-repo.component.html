@@ -47,15 +47,18 @@
               required
               formControlName="password">
           </div>
-          <div class="form-group">
+          <div class="form-group has-error" >
             <button type="button" class="btn btn-primary" (click)="pickPath()"> Pick Path</button>
             <input
               [(ngModel)]="selectedDir"
+              type="hidden"
               class="form-control"
               name="path"
               required
               formControlName="path">
+            <span *ngIf="!validPath" class="help-block">Directory has to be empty!</span>
           </div>
+
           <div class="form-group">
             <label for="frequency">Frequency</label>
             <input

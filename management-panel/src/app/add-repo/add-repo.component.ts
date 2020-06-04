@@ -22,6 +22,7 @@ export class AddRepoComponent implements OnInit {
   private ipc: IpcRenderer;
   selectedDir = '';
   backups: BackupModel[] = [];
+  validPath = true;
 
   constructor(private router: Router, private repoService: RepoService) {
     if ((<any> window).require) {
@@ -67,7 +68,12 @@ export class AddRepoComponent implements OnInit {
 
     this.ipc.on('selected-dir', (event, arg) => {
       console.log(arg);
-      this.selectedDir = arg.toString();
+      if (arg === 'not-empty') {
+          this.validPath = false;
+      } else {
+        this.validPath = true;
+        this.selectedDir = arg.toString();
+      }
     });
   }
 
@@ -78,7 +84,7 @@ export class AddRepoComponent implements OnInit {
   submit() {
     const {id, url, login, password, path, frequency} = this.repoForm.value;
     if (this.repoService.repos.map(repo => repo.id).includes(id)) {
-      window.alert("Repository with given ID already exist!");
+      window.alert('Repository with given ID already exist!');
       return;
     }
 
@@ -89,7 +95,7 @@ export class AddRepoComponent implements OnInit {
 
   addBackup() {
     if (this.backups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
-      window.alert("Backup with given url already exist!");
+      window.alert('Backup with given url already exist!');
       return;
     }
 
@@ -98,12 +104,12 @@ export class AddRepoComponent implements OnInit {
     const backupPassword = this.password.nativeElement.value;
     const newBackup = new BackupModel(backupUrl, backupLogin, backupPassword);
     this.backups.push(newBackup);
-    this.clearBackup()
+    this.clearBackup();
   }
 
   private clearBackup() {
-    this.url.nativeElement.value = "";
-    this.login.nativeElement.value = "";
-    this.password.nativeElement.value = "";
+    this.url.nativeElement.value = '';
+    this.login.nativeElement.value = '';
+    this.password.nativeElement.value = '';
   }
 }

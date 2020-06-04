@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const url = require('url');
+const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -68,9 +69,23 @@ app.on('activate', () => {
   }
 });
 
+function isDirEmpty(dirname) {
+    return fs.promises.readdir(dirname);
+}
+
 ipcMain.on("open-file-dialog-for-dir", async event => {
   const dir = await dialog.showOpenDialog({ properties: ["openDirectory"] });
+  
+  
   if (dir) {
-    event.sender.send("selected-dir", dir.filePaths[0]);
+	const files = await isDirEmpty(dir.filePaths[0])
+	
+	if(files.length===0) {
+		event.sender.send("selected-dir", dir.filePaths[0]);
+	}
+	else{
+		event.sender.send("selected-dir", "not-empty");
+	}
+    
   }
 });
