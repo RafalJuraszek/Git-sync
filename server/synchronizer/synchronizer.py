@@ -33,7 +33,17 @@ class MockDb:
 
 
 def generate_remote_name(remote):
-    return remote.replace('/','_').replace(':', '-').replace('?', '_')
+    return remote.replace('/','_').replace(':', '-').replace('?', '__').replace('.','--')
+
+
+def remove_remote(local_path, remote_url):
+    try:
+        repo = Repo(local_path)
+        if not repo.bare:
+            repo.delete_remote(generate_remote_name(remote_url))
+    except Exception as e:
+        log("Exception while removing branch", 3)
+        log(e, 3)
 
 
 class SyncRepository:
@@ -166,6 +176,7 @@ class Synchronizer:
         pass
 
 
+# remove_remote('C:\\Users\\Adrian\\Studia\\IoTest', 'https://bitbucket.org/IoTeamRak/test.git')
 s = Synchronizer()
 s.synchronize_all_repos()
 
