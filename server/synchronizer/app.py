@@ -55,17 +55,21 @@ def add_repo():
                                                        data.get('path', None),
                                                        frequency)
 
-    print("db_communicate>>>>>>>>>> " + db_communicate)
+    # print("db_communicate>>>>>>>>>> " + db_communicate)
     if not db_communicate == "ok":
-        print("DEBUG>>>>>>>>>>")
+        # print("DEBUG>>>>>>>>>>")
         return send_400_db_error(db_communicate)
 
 
     for backup_repo in backups_json:
-        repos_db.insert_data_backup_repos(data.get('id', None),
+        db_communicate =repos_db.insert_data_backup_repos(data.get('id', None),
                                           backup_repo.get('url', None),
                                           backup_repo.get('login', None),
                                           backup_repo.get('password', None))
+
+        if not db_communicate == "ok":
+            print(db_communicate)
+            # nie istotne dla uzytkownika
 
     repos_db.close()
 

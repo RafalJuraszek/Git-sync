@@ -257,7 +257,7 @@ class ReposDatabaseHandler:
         try:
             sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
             cursor = sqliteConnection.cursor()
-            print("Connected to SQLite")
+            # print("Connected to SQLite")
 
             sqlite_insert_with_param = """INSERT INTO masterRepos
                               (id, url, login, password, path, frequency) 
@@ -267,26 +267,27 @@ class ReposDatabaseHandler:
             data_tuple = (id, url, login, password, path, frequency)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
-            print("Python Variables inserted successfully into SqliteDb_developers table")
+            print("DB inserted successfully into master_repos table")
         except sqlite3.Error as error:
             print("Error while creating a sqlite table", error)
             return_message = master_repo_insert_error
         finally:
             if (sqliteConnection):
                 sqliteConnection.close()
-                print("sqlite connection is closed")
-                print(">>>>>>>>>>" + return_message)
+                # print("sqlite connection is closed")
+                # print(">>>>>>>>>>" + return_message)
                 return return_message
 
 
 
 
     def insert_data_backup_repos(self, master_repo_id, url, login, password):
+        return_message = "ok"
         try:
-            print(">>>>>>>>>>>>>>>>>> Dodawanie backupu")
+            # print(">>>>>>>>>>>>>>>>>> Dodawanie backupu")
             sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
             cursor = sqliteConnection.cursor()
-            print("Connected to SQLite")
+            # print("Connected to SQLite")
 
             sqlite_insert_with_param = """INSERT INTO backupRepos
                               (master_repo_id, url, login, password)  
@@ -299,10 +300,13 @@ class ReposDatabaseHandler:
             print("Python Variables inserted successfully into backup_repos table")
         except sqlite3.Error as error:
             print("Error while creating a sqlite table", error)
+            return_message = reapeted_combinatio_master_backup_url(master_repo_id, url)
+
         finally:
             if (sqliteConnection):
                 sqliteConnection.close()
-                print("sqlite connection is closed")
+                # print("sqlite connection is closed")
+                return return_message
 
 
     def update_frequency_master_repos(self, id, frequency):
