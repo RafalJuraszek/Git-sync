@@ -1,6 +1,9 @@
 import os
+import signal
 from time import sleep
 from threading import Thread
+from threading import current_thread
+from threading import Event
 
 from git import Repo
 from git import exc
@@ -11,7 +14,7 @@ from server.db.database_handler import ReposDatabaseHandler
 
 
 def log(message, lvl = 0):
-    print(message)
+    print('[' + current_thread().name + ']' + message)
 
 
 class MockDb:
@@ -19,21 +22,25 @@ class MockDb:
         pass
 #logins, passwords, paths, periods
     def get_master_repos(self):
-        return (['test'],
-                ['https://github.com/Roshoy/test'],
-                ['Roshoy'],
-                ['not using you chicky wanker'],
-                [r'C:\Users\Adrian\Studia\IoTest'],
-                [30])
+        return (['test', 'test2'],
+                ['https://github.com/Roshoy/test', 'https://github.com/Roshoy/test2'],
+                ['Roshoy', 'Roshoy'],
+                ['dummy', 'dummy'],
+                [r'C:\Users\Adrian\Studia\IoTest', r'C:\Users\Adrian\Studia\IoTest2'],
+                [30, 35])
 
     def get_backup_repos(self, master_repo_id):
-        return (['https://bitbucket.org/IoTeamRak/test.git'],
+        if master_repo_id == 'test':
+            return (['https://bitbucket.org/IoTeamRak/test.git'],
+                    ['IoTeamRak'],
+                    ['Q1w2e3r4'])
+        return (['https://bitbucket.org/IoTeamRak/test22.git'],
                 ['IoTeamRak'],
                 ['Q1w2e3r4'])
 
 
 def generate_remote_name(remote):
-    return remote.replace('/','_').replace(':', '-').replace('?', '__').replace('.','--')
+    return remote.replace('/', '_').replace(':', '-').replace('?', '__').replace('.', '--')
 
 
 def remove_remote(local_path, remote_url):
@@ -41,6 +48,8 @@ def remove_remote(local_path, remote_url):
         repo = Repo(local_path)
         if not repo.bare:
             repo.delete_remote(generate_remote_name(remote_url))
+    except KeyboardInterrupt:
+        raise
     except Exception as e:
         log("Exception while removing branch", 3)
         log(e, 3)
@@ -68,6 +77,7 @@ class SyncRepository:
         Repo.clone_from(origin, local_path)
         self.initialize(local_path, login, password)
         self.localRepo.git.config('remote.origin.prune', 'true')
+        log(f"Local repository created at {local_path}")
         return self
     
     def add_remote(self, remote_url, login, password):
@@ -105,6 +115,8 @@ class SyncRepository:
                 self.localRepo.git.checkout(branch_name, '--force')
                 self.pull()
                 log(f'Pulled {branch_name} from origin')
+            except KeyboardInterrupt:
+                raise
             except Exception as e:
                 log(e)
 
@@ -114,23 +126,33 @@ class SyncRepository:
             url = self.get_remote_url(remote, login, password)
             log(f'Pushing all to {url}')
             self.localRepo.git.push(url, '--all', '--force')
+        log(f'All is pushed')
 
     def get_remote_url(self, remote, login, password):
         p = password.replace('@', '%40')
         url = next(remote.urls).split('//', 1)[1]
-        return f'https://{login}:{p}@{url}'
+        url = f'https://{login}:{p}@{url}'
+        if not url.endswith('.git'):
+            url += '.git'
+        return url
 
     def synchronize_all(self):
         # checkout to next branch
+        log('Starting synchronization')
         self.pull_all()
         self.push_to_remotes()
+        log('Synchronization ended')
 
 
 class Synchronizer:
-    def __init__(self):
-        self.threads = []
+    check_if_alive_period = 10
 
-    def synchronization_loop(self, repo_id, url, login, password, path, period):
+    def __init__(self):
+        """threads - dictionary holding tuples of thread and event closing it, with keys as repository id"""
+        self.threads = {}
+
+    def synchronization_loop(self, repo_id, url, login, password, path, period, closing_event: Event):
+        log(f'Synchronization started for {repo_id}')
         try:
             while True:
                 start = datetime.now()
@@ -149,15 +171,32 @@ class Synchronizer:
                 repo.synchronize_all()
 
                 time_to_wait = period - (datetime.now() - start).total_seconds()
-                sleep(time_to_wait if time_to_wait > 0 else 0)
+
+                while not closing_event.is_set() and time_to_wait > 0:
+                    sleep(min(self.check_if_alive_period, period))
+                    time_to_wait = period - (datetime.now() - start).total_seconds()
+
+                if closing_event.is_set():
+                    return
+
         except exc.NoSuchPathError as e:
             log("No such path exception")
+        except KeyboardInterrupt:
+            log(f'Closing {current_thread().name} with {repo_id}')
 
     def add_new_synchronization_thread(self, repo_id, url, login, password, path, period):
-        t = Thread(target=self.synchronization_loop,
-                   args=(repo_id, url, login, password, path, period))
-        t.start()
-        self.threads.append(t)
+        try:
+            if repo_id in self.threads.keys():
+                log(f'{repo_id} is already being synchronized')
+                return
+            closing_event = Event()
+            t = Thread(target=self.synchronization_loop,
+                       args=(repo_id, url, login, password, path, period, closing_event))
+            t.start()
+            self.threads[repo_id] = (t, closing_event)
+        except Exception as e:
+            log(f'Exception while creating thread for {repo_id}')
+            log(e)
 
     def synchronize_all_repos(self):
         # delay = datetime.now() - start
@@ -166,19 +205,27 @@ class Synchronizer:
         repos_db = MockDb()  # ReposDatabaseHandler()
 
         ids, urls, logins, passwords, paths, periods = repos_db.get_master_repos()
-        # local_repos = ['C:\\Users\\Adrian\\Studia\\IoTest']  # here we need db data
 
         for index in range(len(ids)):
             self.add_new_synchronization_thread(ids[index], urls[index], logins[index], passwords[index], paths[index],
                                                 periods[index])
 
-    def end_synchronization_loops(self):
-        pass
+    def end_synchronization_loop(self, repo_id):
+        log(f'Closing synchronization loop for repository {repo_id} on {self.threads[repo_id][0].name}')
+        self.threads[repo_id][1].set()
+
+    def end_all_synchronization_loops(self):
+        for id in self.threads.keys():
+            self.end_synchronization_loop(id)
 
 
 # remove_remote('C:\\Users\\Adrian\\Studia\\IoTest', 'https://bitbucket.org/IoTeamRak/test.git')
 s = Synchronizer()
 s.synchronize_all_repos()
+
+sleep(15)
+
+s.end_synchronization_loop('test')
 
 # repo = SyncRepository()
 # # repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
