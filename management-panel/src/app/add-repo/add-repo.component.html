@@ -50,6 +50,7 @@
           <div class="form-group has-error" >
             <button type="button" class="btn btn-primary" (click)="pickPath()"> Pick Path</button>
 
+
             <input
               [(ngModel)]="selectedDir"
               type="hidden"
@@ -57,7 +58,8 @@
               name="path"
               required
               formControlName="path">
-            <span *ngIf="!validPath" class="help-block">Directory has to be empty!</span>
+            <span *ngIf="validPath" class="help-block" style="color: blue;">{{selectedDir}}</span>
+            <span *ngIf="!validPath" class="help-block ">Directory has to be empty!</span>
             <mat-spinner diameter="70" style="margin-top: 10px;" color="warn" *ngIf="running"> </mat-spinner>
           </div>
 
@@ -66,6 +68,7 @@
             <label for="frequency">Frequency</label>
             <input
               type="number"
+              min="1"
               id="frequency"
               class="form-control"
               name="frequency"
