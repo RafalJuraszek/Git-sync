@@ -1,4 +1,5 @@
 import os
+import shutil
 import signal
 from time import sleep
 from threading import Thread
@@ -44,6 +45,11 @@ def generate_remote_name(remote):
 
 
 def remove_remote(local_path, remote_url):
+    """
+
+    :param local_path: local path of repository
+    :param remote_url: url to remote to delete
+    """
     try:
         repo = Repo(local_path)
         if not repo.bare:
@@ -96,7 +102,7 @@ class SyncRepository:
             log(e)
 
     def add_remotes(self, remotes):
-        """@remotes:param  - list of tuples (url, login, password)"""
+        """:param remotes: iterable of tuples (url, login, password)"""
         for remote in remotes:
             self.add_remote(remote[0], remote[1], remote[2])
 
@@ -210,6 +216,37 @@ class Synchronizer:
             self.add_new_synchronization_thread(ids[index], urls[index], logins[index], passwords[index], paths[index],
                                                 periods[index])
 
+    def get_repository_local_path(self, repo_id):
+        folder = ''
+        try:
+            repos_db = ReposDatabaseHandler()
+            ids, urls, logins, passwords, paths, periods = repos_db.get_master_repos()
+            for i in range(len(ids)):
+                if ids[i] == repo_id:
+                    folder = paths[i]
+                    break
+        except Exception as e:
+            log('Error while getting repository name from database')
+        return folder
+
+    def remove_repository(self, repo_id):
+        folder = self.get_repository_local_path(repo_id)
+        if not folder:
+            return
+
+        self.end_synchronization_loop(repo_id)
+        self.threads[repo_id][0].join()
+        
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
     def end_synchronization_loop(self, repo_id):
         log(f'Closing synchronization loop for repository {repo_id} on {self.threads[repo_id][0].name}')
         self.threads[repo_id][1].set()
@@ -217,21 +254,3 @@ class Synchronizer:
     def end_all_synchronization_loops(self):
         for id in self.threads.keys():
             self.end_synchronization_loop(id)
-
-
-# remove_remote('C:\\Users\\Adrian\\Studia\\IoTest', 'https://bitbucket.org/IoTeamRak/test.git')
-s = Synchronizer()
-s.synchronize_all_repos()
-
-sleep(15)
-
-s.end_synchronization_loop('test')
-
-# repo = SyncRepository()
-# # repo.create(r'https://github.com/Roshoy/test/', 'C:\\Users\\Adrian\\Studia\\IoTest')
-# repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
-# repo.add_remote('https://bitbucket.org/IoTeamRak/test', 'bitbucket')
-# # repo.initialize('C:\\Users\\Adrian\\Studia\\IoTest')
-#
-# synchronize2(repo)
-
