@@ -196,8 +196,9 @@ def get_notify_data():
     return response
 
 
+
 def send_400_db_error(message):
-    return Response("{'message':'" + message+"'}", status=400, mimetype='application/json')
+    return Response("{\"message\":\"" + message+"\"}", status=400, mimetype='application/json')
 
 class Repo:
 
