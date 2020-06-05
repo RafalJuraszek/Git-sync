@@ -5,6 +5,7 @@ from server.db.database_handler import ReposDatabaseHandler
 from flask import jsonify
 from server.notificator.notificator import notify
 from server.synchronizer.synchronizer import Synchronizer
+from server.db.database_initializer import DatabaseInitializer
 from flask import Response
 
 app = Flask(__name__)
@@ -27,18 +28,18 @@ def get_test():
 
 @app.route("/api/addRepo", methods=['POST'])
 def add_repo():
-    print("add repo request")
+    # print("add repo request")
     print(request)
-    print(request.get_json())
+    # print(request.get_json())
     data = request.get_json()
     print(data)
 
     frequency = data.get('frequency', None)
     backups_json = data.get('backups', None)
     if frequency == None or backups_json == None:
-        print("DEBUG 1")
-        return
-    print("ok")
+        return send_400_db_error("enter frequency and at least one backup repo")
+
+    # print("ok")
     repos_db = ReposDatabaseHandler()
     # jednorazowo
     # repos_db.create_master_repos_and_backup_repos_tables()
@@ -140,7 +141,7 @@ def get_repos():
         print(urls_b)
         print(logins_b)
         for url, login, password in zip(urls_b, logins_b, passwords_b):
-            print("here")
+            # print("here")
             backup = {'url': url, 'login': login, 'password': password}
             backup_repos.append(backup)
         all_repos.append(repo)
@@ -176,6 +177,7 @@ def delete_repos(id):
 
 @app.route("/api/notify", methods=['POST'])
 def get_notify_data():
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> NOTIFY")
     data = request.get_json()
     print("notify DEBUG")
     print(data)
@@ -211,5 +213,7 @@ class MyEncoder(JSONEncoder):
 
 if __name__ == "__main__":
     print("start")
+    db_init = DatabaseInitializer()
+    db_init.create_tables_if_not_exist()
     synchronizer.synchronize_all_repos()
     app.run(debug=True)

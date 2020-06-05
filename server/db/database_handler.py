@@ -378,7 +378,7 @@ class ReposDatabaseHandler:
             select_query = """SELECT url from masterRepos where id = ?"""
             self.cursor.execute(select_query,(id, ))
             records = self.cursor.fetchall()
-            print("records" + str(records))
+            # print("records" + str(records))
             urls = []
 
             for row in records:
@@ -397,12 +397,12 @@ class ReposDatabaseHandler:
             logins = []
             passwords = []
             for row in records:
-                print("jakies backupy")
+                # print("jakies backupy")
                 urls.append(row[0])
                 logins.append(row[1])
                 passwords.append(row[2])
 
-            print("DEBUG BACKUP SELECT")
+            # print("DEBUG BACKUP SELECT")
             print(urls)
             print(logins)
             print(passwords)

@@ -37,11 +37,11 @@ export class HomeComponent implements OnInit {
     const backupsArray2: BackupModel[] = [new BackupModel("url123", "logininin", "haselko")];
 
     const mockRepo1 = new RepoModel(
-      'RakoczyRepo',
-      'anyUrl1',
-      'rakoczy',
+      'MockupRepo',
+      'www.anyUrl1.pl',
+      'login',
       'password123',
-      '/path/to/rakoczy/repo',
+      '/path/to/mockup/repo',
       backupsArray1,
       3
     );

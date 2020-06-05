@@ -23,12 +23,11 @@ def notify(master_repo_id):
     server_ssl.ehlo()
     server_ssl.login(email_address, email_password)
 
-    print("notify debug 2")
     repos_db = ReposDatabaseHandler()
-    url = repos_db.get_master_repo_url(master_repo_id)
+    master_url = repos_db.get_master_repo_url(master_repo_id)
     repos_db.close()
-    print("url -> " + url)
-    s = Scrapper(repo_url= url, master_repo_id = master_repo_id)
+    print("url -> " + master_url)
+    s = Scrapper(repo_url= master_url, master_repo_id = master_repo_id)
     s.scrap_associated()
 
 
@@ -45,17 +44,23 @@ def notify(master_repo_id):
     repos_db.close()
     backups_list = ""
     for url in urls:
-        backups_list.add(url + "\n")
+        backups_list = backups_list + (str(url) + "\n")
+
+
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    print(">>>>>backups_list: " + backups_list)
 
     for email, name in zip(emails, names):
         msg = MIMEMultipart()
 
-        message = message_template.substitute(PERSON_NAME=name, BACKUP_REPOS_LIST=backups_list)
-
+        message = message_template.substitute(PERSON_NAME=name,MASTER_REPO =master_url, BACKUP_REPOS_LIST=backups_list)
+        print(str(message))
         msg['From'] = email_address
         msg['To'] = email
-        msg['Subject'] = "This is test"
-
+        msg['Subject'] = "Backup repositories location"
+        if "noreply" in email:
+            print("unable to scrapp email for " + str(name))
+            continue
         print("send email to " + name + " " + email)
         print(message)
 
@@ -65,7 +70,7 @@ def notify(master_repo_id):
 
 
         # na wszelki wypadek wylaczone
-        # server_ssl.send_message(msg)
+        server_ssl.send_message(msg)
 
         del msg
 

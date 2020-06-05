@@ -8,5 +8,7 @@ def read_template(filename):
 
 
 def ready_template():
-    template_file_content = "Dear ${PERSON_NAME}, \n" + "This is a test message. \n" + "Have a great weekend! \n" + "${BACKUP_REPOS_LIST} \n" + "Yours Truly\n"
+    template_file_content = "Dear ${PERSON_NAME}, \n" + "I'm sending You  " + \
+                            "emergency backups of ${MASTER_REPO} in case of losing acces to this repository.\n" \
+                            + "${BACKUP_REPOS_LIST} \n" + "Have a great day! \n" + "Yours github friend\n"
     return Template(template_file_content)
