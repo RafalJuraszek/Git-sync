@@ -104,7 +104,7 @@ export class AddRepoComponent implements OnInit {
       if (error.status === 504) {
         window.alert('Problem with connecting to the synchronizer');
       } else {
-        window.alert(error.message);
+        window.alert(error.error);
       }
     });
 
