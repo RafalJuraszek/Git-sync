@@ -198,6 +198,7 @@ def get_notify_data():
 
 
 
+
 def send_400_db_error(message):
     return Response("{\"message\":\"" + message+"\"}", status=400, mimetype='application/json')
 
