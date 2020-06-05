@@ -35,11 +35,11 @@ export class NotifyComponent implements OnInit {
 
     // to refactor during integration with backend
     const mockRepo1 = new RepoModel(
-      'RakoczyRepo',
+      'MockupRepo',
       'anyUrl1',
-      'rakoczy',
+      'pass',
       'password123',
-      '/path/to/rakoczy/repo',
+      '/path/to/mockup/repo',
       [],
       10
     );
@@ -57,7 +57,7 @@ export class NotifyComponent implements OnInit {
   notify() {
     if (this.selectedValue === undefined) return;
     this.resetFlags();
-    
+
     // should work after integration with backend
     this.repoService.notify(this.selectedValue).subscribe((data: Response) => {
       this.isNotificationSentSuccessfully = true;
