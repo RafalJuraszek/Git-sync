@@ -38,25 +38,7 @@ export class AddRepoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // to refactor during integration with backend
-    const mockRepo1 = new RepoModel(
-      'RepoExample',
-      'anyUrl1',
-      'loginss',
-      'password123',
-      '/path/to/ex/repo',
-      [],
-      2
-    );
-    const mockRepo2 = new RepoModel('MyRepo',
-      'anyUrl2',
-      'me',
-      'me123',
-      '/path/to/my/repo',
-      [],
-      2
-    );
-    this.repoService.repos.push(mockRepo1, mockRepo2);
+
 
     this.repoForm = new FormGroup({
       id: new FormControl(null),
@@ -104,7 +86,7 @@ export class AddRepoComponent implements OnInit {
       if (error.status === 504) {
         window.alert('Problem with connecting to the synchronizer');
       } else {
-        window.alert(error.message);
+        window.alert(error.error);
       }
     });
 
