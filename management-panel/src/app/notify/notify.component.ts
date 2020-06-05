@@ -33,31 +33,14 @@ export class NotifyComponent implements OnInit {
   ngOnInit(): void {
     this.repoService.getRepos().subscribe((repos) => (this.repos = repos));
 
-    // to refactor during integration with backend
-    const mockRepo1 = new RepoModel(
-      'RakoczyRepo',
-      'anyUrl1',
-      'rakoczy',
-      'password123',
-      '/path/to/rakoczy/repo',
-      [],
-      10
-    );
-    const mockRepo2 = new RepoModel('MyRepo',
-      'anyUrl2',
-      'me',
-      'me123',
-      '/path/to/my/repo',
-      [],
-      10
-    );
-    this.repos.push(mockRepo1, mockRepo2);
+
   }
 
   notify() {
+    console.log(this.selectedValue)
     if (this.selectedValue === undefined) return;
     this.resetFlags();
-    
+
     // should work after integration with backend
     this.repoService.notify(this.selectedValue).subscribe((data: Response) => {
       this.isNotificationSentSuccessfully = true;

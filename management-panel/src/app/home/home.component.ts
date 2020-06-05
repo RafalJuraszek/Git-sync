@@ -36,25 +36,7 @@ export class HomeComponent implements OnInit {
     const backupsArray1: BackupModel[] = [];
     const backupsArray2: BackupModel[] = [new BackupModel("url123", "logininin", "haselko")];
 
-    const mockRepo1 = new RepoModel(
-      'MockupRepo',
-      'www.anyUrl1.pl',
-      'login',
-      'password123',
-      '/path/to/mockup/repo',
-      backupsArray1,
-      3
-    );
-    const mockRepo2 = new RepoModel(
-      'MyRepo',
-      'anyUrl2',
-      'me',
-      'me123',
-      '/path/to/my/repo',
-      backupsArray2,
-      2
-    );
-    this.repos.push(mockRepo1, mockRepo2);
+
     console.log(this.repos);
   }
 
