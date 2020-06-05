@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
       if (error.status === 504) {
         window.alert('Problem with connecting to the synchronizer');
       } else {
-        window.alert(error.error);
+        window.alert(error.error.message);
       }
       this.running = false;
     });
