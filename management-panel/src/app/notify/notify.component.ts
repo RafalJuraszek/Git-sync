@@ -33,6 +33,7 @@ export class NotifyComponent implements OnInit {
   ngOnInit(): void {
     this.repoService.getRepos().subscribe((repos) => (this.repos = repos));
 
+
     // to refactor during integration with backend
     const mockRepo1 = new RepoModel(
       'MockupRepo',
@@ -52,9 +53,11 @@ export class NotifyComponent implements OnInit {
       10
     );
     this.repos.push(mockRepo1, mockRepo2);
+
   }
 
   notify() {
+    console.log(this.selectedValue)
     if (this.selectedValue === undefined) return;
     this.resetFlags();
 
