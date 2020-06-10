@@ -151,12 +151,11 @@ def get_repos():
 
 @app.route("/api/repos/<id>", methods=['DELETE'])
 def delete_repos(id):
-    data = request.get_json()
+    print("DELETE handler")
     repos_db = ReposDatabaseHandler()
     print(id)
     # logika -> jak jest body z urlem to usuwamy tylko 1 konretny backup, jak bez body całe repo
     data = request.get_json()
-    print(data)
     if data is None:
         print("delete master")
         repos_db.delete_master_repo(id)
@@ -217,5 +216,5 @@ if __name__ == "__main__":
     print("start")
     db_init = DatabaseInitializer()
     db_init.create_tables_if_not_exist()
-    # synchronizer.synchronize_all_repos()
+    synchronizer.synchronize_all_repos()
     app.run(debug=True)
