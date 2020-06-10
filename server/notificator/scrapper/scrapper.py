@@ -1,6 +1,6 @@
 import json
 import requests
-from server.db.database_handler import EmailsDatabaseHandler
+from server.database_maintenance.database_handler import EmailsDatabaseHandler
 
 class Scrapper:
     def __init__(self, repo_url, master_repo_id):

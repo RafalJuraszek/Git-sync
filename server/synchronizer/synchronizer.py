@@ -5,7 +5,7 @@ from threading import Event
 from threading import Thread
 from time import sleep
 
-from server.db.database_handler import ReposDatabaseHandler
+from server.database_maintenance.database_handler import ReposDatabaseHandler
 from server.synchronizer.sync_repository import *
 
 

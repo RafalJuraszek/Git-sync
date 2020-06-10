@@ -1,4 +1,4 @@
-from server.db.database_handler import ReposDatabaseHandler
+from server.database_maintenance.database_handler import ReposDatabaseHandler
 print('test')
 repos_db = ReposDatabaseHandler()
 # repos_db.create_master_repos_and_backup_repos_tables()

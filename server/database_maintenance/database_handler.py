@@ -1,6 +1,6 @@
 import sqlite3
-from server.db.database_localizator import DBLocation
-from server.db.error_messages_for_user import *
+from server.database_maintenance.database_localizator import DBLocation
+from server.database_maintenance.error_messages_for_user import *
 
 class EmailsDatabaseHandler:
 

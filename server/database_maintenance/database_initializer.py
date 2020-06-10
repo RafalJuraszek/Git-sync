@@ -1,4 +1,4 @@
-from server.notificator.notificator import ReposDatabaseHandler, EmailsDatabaseHandler
+from server.notificator.email_client.notificator import ReposDatabaseHandler, EmailsDatabaseHandler
 
 class DatabaseInitializer:
     def create_tables_if_not_exist(self):

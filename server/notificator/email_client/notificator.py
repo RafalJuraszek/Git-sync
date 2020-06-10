@@ -1,14 +1,14 @@
 import smtplib
-from server.notificator.utils import read_template, ready_template
+from server.notificator.email_client.utils import ready_template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import sys
-from server.scrapper.scrapper import Scrapper
+from server.notificator.scrapper.scrapper import Scrapper
 
 
 # insert at 1, 0 is the script path (or '' in REPL)
-sys.path.insert(1, '../db')
-from server.db.database_handler import EmailsDatabaseHandler, ReposDatabaseHandler
+sys.path.insert(1, '../database_maintenance')
+from server.database_maintenance.database_handler import EmailsDatabaseHandler, ReposDatabaseHandler
 
 
 def notify(master_repo_id):

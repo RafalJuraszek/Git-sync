@@ -1,7 +1,7 @@
 import sqlite3
 
 try:
-    sqliteConnection = sqlite3.connect('backup.db')
+    sqliteConnection = sqlite3.connect('backup.database_maintenance')
     sqlite_create_table_query = ''' CREATE TABLE IF NOT EXISTS masterRepos (
                                                 id text PRIMARY KEY,
                                                 url text NOT NULL,
@@ -29,7 +29,7 @@ finally:
 
 
 # try:
-#     sqliteConnection = sqlite3.connect('SQLite_Python.db')
+#     sqliteConnection = sqlite3.connect('SQLite_Python.database_maintenance')
 #     cursor = sqliteConnection.cursor()
 #     print("Successfully Connected to SQLite")
 #
@@ -53,7 +53,7 @@ finally:
 
 def insertVaribleIntoTable(id, url, login, password, path, frequency):
     try:
-        sqliteConnection = sqlite3.connect('backup.db')
+        sqliteConnection = sqlite3.connect('backup.database_maintenance')
         cursor = sqliteConnection.cursor()
         print("Connected to SQLite")
 
