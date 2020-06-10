@@ -402,10 +402,6 @@ class ReposDatabaseHandler:
                 logins.append(row[1])
                 passwords.append(row[2])
 
-            # print("DEBUG BACKUP SELECT")
-            print(urls)
-            print(logins)
-            print(passwords)
             return urls, logins, passwords
         except sqlite3.Error as error:
             print("Error while selecting from table backup_repos -> " + str(error))

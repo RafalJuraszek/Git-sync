@@ -132,18 +132,17 @@ def get_repos():
     passwords = tab[3]
     paths = tab[4]
     frequencies = tab[5]
-
+    print("get repos")
     for id, url, login, password, path, frequency in zip(ids, urls, logins, passwords, paths, frequencies):
         repo = {'id': id, 'url': url, 'login': login,
                 'password': password, 'path': path, 'frequency': frequency}
         backup_repos = []
         urls_b, logins_b, passwords_b = repos_db.get_backup_repos(id)
-        print(urls_b)
         print(logins_b)
         for url, login, password in zip(urls_b, logins_b, passwords_b):
-            # print("here")
             backup = {'url': url, 'login': login, 'password': password}
             backup_repos.append(backup)
+        repo['backups'] = backup_repos
         all_repos.append(repo)
     repos_db.close()
     print(all_repos)
@@ -218,5 +217,5 @@ if __name__ == "__main__":
     print("start")
     db_init = DatabaseInitializer()
     db_init.create_tables_if_not_exist()
-    synchronizer.synchronize_all_repos()
+    # synchronizer.synchronize_all_repos()
     app.run(debug=True)
