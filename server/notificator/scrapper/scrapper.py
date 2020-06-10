@@ -13,7 +13,7 @@ class Scrapper:
 
         github_url = True
         if not github_url:
-            return
+            return None
         prefix = "https://github.com/"
 
         def _remove_prefix(text, prefix):
