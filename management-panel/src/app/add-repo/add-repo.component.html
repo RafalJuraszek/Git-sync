@@ -125,9 +125,18 @@
         <h1>Backups</h1>
 
         <ul class="list-group">
-          <li class="list-group-item" style="cursor: pointer"
-              *ngFor="let backup of backups"
-          >{{backup.url}} </li>
+          <div  class="list-group-item clearfix"
+                *ngFor="let backup of backups"
+          >
+            <div class="pull-left">
+              <h4 class="list-group-item-heading">{{backup.url}}</h4>
+            </div>
+            <button class="btn btn-danger pull-right"
+                    style="cursor: pointer"
+                    type="button"
+                    (click)="deleteBackup(backup)"
+            >Delete</button>
+          </div>
 
         </ul>
         <hr>

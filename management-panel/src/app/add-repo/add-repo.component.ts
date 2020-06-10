@@ -91,6 +91,10 @@ export class AddRepoComponent implements OnInit {
     });
 
   }
+  deleteBackup(backup: BackupModel) {
+    const backupToDelete = this.backups.indexOf(backup);
+    this.backups.splice(backupToDelete, 1);
+  }
 
   addBackup() {
     if (this.backups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
