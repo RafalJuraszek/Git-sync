@@ -6,7 +6,6 @@ from threading import Thread
 from time import sleep
 
 from server.database_maintenance.database_handler import ReposDatabaseHandler
-from server.manual_db_tests.mock_db import MockDb
 from server.synchronizer.sync_repository import *
 
 DataBaseHandler = ReposDatabaseHandler
@@ -139,11 +138,3 @@ class Synchronizer:
     def end_all_synchronization_loops(self):
         for id in self.threads.keys():
             self.end_synchronization_loop(id)
-
-#
-s = Synchronizer()
-s.synchronize_all_repos()
-# input()
-# s.end_all_synchronization_loops()
-#
-# # s.remove_repository('test')
