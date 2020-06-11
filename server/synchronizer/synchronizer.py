@@ -9,7 +9,10 @@ from server.database_maintenance.database_handler import ReposDatabaseHandler
 from server.manual_db_tests.mock_db import MockDb
 from server.synchronizer.sync_repository import *
 
-DataBaseHandler = MockDb
+DataBaseHandler = ReposDatabaseHandler
+
+logging.basicConfig(format='%(asctime)s [%(threadName)s] %(levelname)s: %(message)s',
+                    level=logging.INFO, datefmt='%m/%d/%Y %H:%M:%S', filename='synchronizer_log.log')
 
 def remove_remote(local_path, remote_url):
     """
@@ -63,11 +66,13 @@ class Synchronizer:
 
                 if closing_event.is_set():
                     return
-
+        except exc.GitCommandError as e:
+            log(f'Error while creating local repository : {e}', 2)
         except exc.NoSuchPathError as e:
             log("No such path exception", 2)
         except KeyboardInterrupt:
             log(f'Closing {current_thread().name} with {repo_id}', 1)
+        log('Synchronization loop stopped')
 
     def add_new_synchronization_thread(self, repo_id, url, login, password, path, period):
         try:
@@ -75,7 +80,7 @@ class Synchronizer:
                 log(f'{repo_id} is already being synchronized')
                 return
             closing_event = Event()
-            t = Thread(target=self.synchronization_loop,
+            t = Thread(target=self.synchronization_loop, name=repo_id,
                        args=(repo_id, url, login, password, path, period, closing_event))
             t.start()
             self.threads[repo_id] = (t, closing_event)

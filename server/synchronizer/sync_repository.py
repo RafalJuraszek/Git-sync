@@ -7,7 +7,12 @@ import logging
 
 def log(message, lvl=0):
     status = {0: 'INFO', 1: 'WARNING', 2: 'ERROR'}
-    print('[' + current_thread().name + '][' + status[lvl] + ']' + str(message))
+    if lvl == 0:
+        logging.info(message)
+    elif lvl == 1:
+        logging.warning(message)
+    elif lvl == 2:
+        logging.error(message)
 
 
 def generate_remote_name(remote):
@@ -26,9 +31,7 @@ class SyncRepository:
         if not self.localRepo.bare:
             for r in self.localRepo.remotes:
                 if r.name != 'origin':
-                    print(type(r))
                     self.remotes.append([r, login, password])  # setting same password as for master
-                    print(type(self.remotes[0]))
                 else:
                     self.origin = (r, login, password)
             log(f'Repo loaded from {local_path}')
