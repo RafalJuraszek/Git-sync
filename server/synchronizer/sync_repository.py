@@ -70,6 +70,7 @@ class SyncRepository:
         return [line.strip() for line in self.localRepo.git.branch().replace('*', ' ').splitlines()]
 
     def pull_all(self):
+        branches_to_remove = self.get_all_branches()
         for ref in self.origin[0].refs:
             try:
                 branch_name = ref.name.split('/')[1]
@@ -77,13 +78,17 @@ class SyncRepository:
                     continue
                 log(f'Pulling {branch_name} from origin')
                 self.localRepo.git.checkout(branch_name, '--force')
+                branches_to_remove.remove(branch_name)
                 self.pull()
                 log(f'Pulled {branch_name} from origin')
             except KeyboardInterrupt:
                 raise
             except Exception as e:
-                log(e, 2)
+                log(f'Error while pulling from {ref.name} : {e}', 2)
                 raise
+        for branch in branches_to_remove:
+            log(f'Removing local branch {branch}')
+            self.localRepo.git.branch('-D', branch)
 
     def get_remote_branches(self, remote):
         lines = self.localRepo.git.ls_remote('--heads', remote.name).splitlines()
