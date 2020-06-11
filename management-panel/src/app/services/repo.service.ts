@@ -9,7 +9,7 @@ import {BackupModel} from "../model/backup.model";
 @Injectable()
 export class RepoService {
 
-  basicApiUrl: string = 'http://localhost:4200/api/';
+  basicApiUrl: string = 'http://localhost:5000/api/';//'http://localhost:4200/api/';
   repos: RepoModel[] = [];
 
   constructor(private http: HttpClient) {

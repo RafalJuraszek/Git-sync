@@ -13,8 +13,20 @@ import {BackupModel} from "../model/backup.model";
 export class HomeComponent implements OnInit {
   repos: RepoModel[] = [];
   running = true;
+  dialog;
 
   constructor(private router: Router, private repoService: RepoService) {
+
+    if ((<any> window).require) {
+      try {
+        const Dialogs = (<any> window).require('dialogs')
+        this.dialog = Dialogs();
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      console.warn('App not running inside Electron!');
+    }
   }
 
   ngOnInit() {
@@ -25,9 +37,9 @@ export class HomeComponent implements OnInit {
     }, (error) => {
       console.log(error);
       if (error.status === 504) {
-        window.alert('Problem with connecting to the synchronizer');
+        this.dialog.alert('Problem with connecting to the synchronizer');
       } else {
-        window.alert(error.error.message);
+        this.dialog.alert(error.error.message);
       }
       this.running = false;
     });

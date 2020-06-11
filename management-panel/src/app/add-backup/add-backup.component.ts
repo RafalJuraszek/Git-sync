@@ -23,10 +23,21 @@ export class AddBackupComponent implements OnInit {
   allBackups: BackupModel[] = [];
   newBackups: BackupModel[] = [];
   isFrequencyChanged: boolean = false;
+  dialog;
 
   constructor(private router: Router, private repoService: RepoService) {
     this.currentRepo = this.router.getCurrentNavigation().extras.state?.repo;
     this.allBackups = this.currentRepo.backups;
+    if ((<any> window).require) {
+      try {
+        const Dialogs = (<any> window).require('dialogs')
+        this.dialog = Dialogs();
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      console.warn('App not running inside Electron!');
+    }
   }
 
   ngOnInit() {
@@ -39,7 +50,7 @@ export class AddBackupComponent implements OnInit {
 
   addBackup() {
     if (this.allBackups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
-      window.alert("Backup with given url already exist!");
+      this.dialog.alert("Backup with given url already exist!");
       return;
     }
 

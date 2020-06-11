@@ -24,10 +24,13 @@ export class AddRepoComponent implements OnInit {
   backups: BackupModel[] = [];
   validPath = true;
   running = false;
+  dialog;
 
   constructor(private router: Router, private repoService: RepoService, private changer: ChangeDetectorRef) {
     if ((<any> window).require) {
       try {
+        const Dialogs = (<any> window).require('dialogs')
+        this.dialog = Dialogs();
         this.ipc = (<any> window).require('electron').ipcRenderer;
       } catch (e) {
         throw e;
@@ -74,7 +77,7 @@ export class AddRepoComponent implements OnInit {
   submit() {
     const {id, url, login, password, path, frequency} = this.repoForm.value;
     if (this.repoService.repos.map(repo => repo.id).includes(id)) {
-      window.alert('Repository with given ID already exist!');
+      this.dialog.alert('Repository with given ID already exist!');
       return;
     }
 
@@ -84,9 +87,9 @@ export class AddRepoComponent implements OnInit {
     }, (error) => {
       console.log(error);
       if (error.status === 504) {
-        window.alert('Problem with connecting to the synchronizer');
+        this.dialog.alert('Problem with connecting to the synchronizer');
       } else {
-        window.alert(error.error.message);
+        this.dialog.alert(error.error.message);
       }
     });
 
@@ -98,7 +101,7 @@ export class AddRepoComponent implements OnInit {
 
   addBackup() {
     if (this.backups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
-      window.alert('Backup with given url already exist!');
+      this.dialog.alert('Backup with given url already exist!');
       return;
     }
 
