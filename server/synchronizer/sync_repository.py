@@ -2,6 +2,7 @@ from threading import current_thread
 
 from git import Repo
 from git import exc
+import logging
 
 
 def log(message, lvl=0):
@@ -25,12 +26,15 @@ class SyncRepository:
         if not self.localRepo.bare:
             for r in self.localRepo.remotes:
                 if r.name != 'origin':
+                    print(type(r))
                     self.remotes.append([r, login, password])  # setting same password as for master
+                    print(type(self.remotes[0]))
                 else:
                     self.origin = (r, login, password)
             log(f'Repo loaded from {local_path}')
         else:
             log(f'Repo not loaded correctly from {local_path}', 2)
+            raise ImportError()
         return self
 
     def create(self, origin, local_path, login, password):
@@ -61,16 +65,16 @@ class SyncRepository:
         for remote in remotes:
             self.add_remote(remote[0], remote[1], remote[2])
 
-    def pull(self):
+    def pull_current_branch(self):
         self.localRepo.git.fetch('--prune')
         self.localRepo.git.rebase()
         self.localRepo.git.submodule('update', '--recursive')
 
-    def get_all_branches(self):
+    def get_current_branches(self):
         return [line.strip() for line in self.localRepo.git.branch().replace('*', ' ').splitlines()]
 
     def pull_all(self):
-        branches_to_remove = self.get_all_branches()
+        branches_to_remove = self.get_current_branches()
         for ref in self.origin[0].refs:
             try:
                 branch_name = ref.name.split('/')[1]
@@ -79,7 +83,7 @@ class SyncRepository:
                 log(f'Pulling {branch_name} from origin')
                 self.localRepo.git.checkout(branch_name, '--force')
                 branches_to_remove.remove(branch_name)
-                self.pull()
+                self.pull_current_branch()
                 log(f'Pulled {branch_name} from origin')
             except KeyboardInterrupt:
                 raise
@@ -106,18 +110,11 @@ class SyncRepository:
 
     def push_to_remotes(self):
         log(f'Pushing all')
-        current_branches = self.get_all_branches()
+        current_branches = self.get_current_branches()
         for remote, login, password in self.remotes:
             url = self.get_remote_url(remote, login, password)
             log(f'Pushing all to {remote.name}')
             self.delete_old_branches_from_remote(remote, url, current_branches)
-            for ref in remote.refs:
-                branch_name = ref.name.split('/')[1]
-                if branch_name == 'HEAD':
-                    continue
-                if branch_name not in current_branches:
-                    log(f'Deleted remote branch {branch_name} from remote {remote.name}')
-
             self.localRepo.git.push(url, '--all', '--force')
         log(f'All is pushed')
 

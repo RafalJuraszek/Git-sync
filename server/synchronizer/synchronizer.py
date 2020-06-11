@@ -45,6 +45,8 @@ class Synchronizer:
                     repo.initialize(path, login, password)
                 except exc.InvalidGitRepositoryError:
                     repo.create(url, path, login, password)
+                except ImportError:
+                    raise
 
                 remote_repos = repos_db.get_backup_repos(repo_id)
                 remote_credentials = []
