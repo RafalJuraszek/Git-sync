@@ -5,7 +5,8 @@ from git import exc
 
 
 def log(message, lvl=0):
-    print('[' + current_thread().name + ']' + str(message))
+    status = {0: 'INFO', 1: 'WARNING', 2: 'ERROR'}
+    print('[' + current_thread().name + '][' + status[lvl] + ']' + str(message))
 
 
 def generate_remote_name(remote):
@@ -29,7 +30,7 @@ class SyncRepository:
                     self.origin = (r, login, password)
             log(f'Repo loaded from {local_path}')
         else:
-            log(f'Repo not loaded correctly from {local_path}')
+            log(f'Repo not loaded correctly from {local_path}', 2)
         return self
 
     def create(self, origin, local_path, login, password):
@@ -53,7 +54,7 @@ class SyncRepository:
                 .create_remote(rem_name, remote_url)
             self.remotes.append([new_remote, login, password])
         except exc.GitCommandError as e:
-            log(e)
+            log(f'Error while adding remote {remote_url} : {e}', 2)
 
     def add_remotes(self, remotes):
         """:param remotes: iterable of tuples (url, login, password)"""
@@ -81,25 +82,35 @@ class SyncRepository:
             except KeyboardInterrupt:
                 raise
             except Exception as e:
-                log(e)
+                log(e, 2)
+                raise
 
     def get_remote_branches(self, remote):
         lines = self.localRepo.git.ls_remote('--heads', remote.name).splitlines()
         return [branch.split()[1].split('heads/')[1] for branch in lines]
 
+    def delete_old_branches_from_remote(self, remote, url, current_branches):
+        branches_to_delete = [branch for branch in self.get_remote_branches(remote) if branch not in current_branches]
+        for branch in branches_to_delete:
+            try:
+                self.localRepo.git.push(url, '--delete', branch)
+                log(f'Deleted remote branch {branch} from remote {remote.name}')
+            except exc.GitCommandError as e:
+                log(f'Error while deleting branch {branch} : {e}', 2)
+
+
     def push_to_remotes(self):
         log(f'Pushing all')
+        current_branches = self.get_all_branches()
         for remote, login, password in self.remotes:
-            print(self.get_remote_branches(remote))
-            current_branches = self.get_all_branches()
             url = self.get_remote_url(remote, login, password)
             log(f'Pushing all to {remote.name}')
+            self.delete_old_branches_from_remote(remote, url, current_branches)
             for ref in remote.refs:
                 branch_name = ref.name.split('/')[1]
                 if branch_name == 'HEAD':
                     continue
                 if branch_name not in current_branches:
-                    self.localRepo.git.push(url, '--delete', branch_name)
                     log(f'Deleted remote branch {branch_name} from remote {remote.name}')
 
             self.localRepo.git.push(url, '--all', '--force')
@@ -114,9 +125,11 @@ class SyncRepository:
         return url
 
     def synchronize_all(self):
-        # checkout to next branch
-        log('Starting synchronization')
-        self.pull_all()
-        self.push_to_remotes()
-        log('Synchronization ended')
+        try:
+            log('Starting synchronization')
+            self.pull_all()
+            self.push_to_remotes()
+            log('Synchronization ended')
+        except:
+            log('Synchronization canceled', 2)
 

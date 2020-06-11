@@ -23,8 +23,8 @@ def remove_remote(local_path, remote_url):
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        log("Exception while removing branch", 3)
-        log(e, 3)
+        log("Exception while removing branch", 2)
+        log(e, 2)
 
 
 class Synchronizer:
@@ -63,9 +63,9 @@ class Synchronizer:
                     return
 
         except exc.NoSuchPathError as e:
-            log("No such path exception")
+            log("No such path exception", 2)
         except KeyboardInterrupt:
-            log(f'Closing {current_thread().name} with {repo_id}')
+            log(f'Closing {current_thread().name} with {repo_id}', 1)
 
     def add_new_synchronization_thread(self, repo_id, url, login, password, path, period):
         try:
@@ -78,8 +78,7 @@ class Synchronizer:
             t.start()
             self.threads[repo_id] = (t, closing_event)
         except Exception as e:
-            log(f'Exception while creating thread for {repo_id}')
-            log(e)
+            log(f'Exception while creating thread for {repo_id} : {e}', 2)
 
     def synchronize_all_repos(self):
         # delay = datetime.now() - start
@@ -103,7 +102,7 @@ class Synchronizer:
                     folder = paths[i]
                     break
         except Exception as e:
-            log('Error while getting repository name from database')
+            log('Error while getting repository name from database', 2)
         return folder
 
     def remove_repository(self, repo_id):
