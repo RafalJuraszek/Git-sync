@@ -6,12 +6,13 @@ from threading import Thread
 from time import sleep
 
 from server.database_maintenance.database_handler import ReposDatabaseHandler
+from server.manual_db_tests.mock_db import MockDb
 from server.synchronizer.sync_repository import *
 
+DataBaseHandler = MockDb
 
 def remove_remote(local_path, remote_url):
     """
-
     :param local_path: local path of repository
     :param remote_url: url to remote to delete
     """
@@ -38,18 +39,18 @@ class Synchronizer:
         try:
             while True:
                 start = datetime.now()
-                repos_db = ReposDatabaseHandler()
+                repos_db = DataBaseHandler()
                 repo = SyncRepository()
                 try:
                     repo.initialize(path, login, password)
                 except exc.InvalidGitRepositoryError:
                     repo.create(url, path, login, password)
+
                 remote_repos = repos_db.get_backup_repos(repo_id)
                 remote_credentials = []
                 for i in range(len(remote_repos[0])):
                     remote_credentials.append((remote_repos[0][i], remote_repos[1][i], remote_repos[2][i]))
                 repo.add_remotes(remote_credentials)
-
                 repo.synchronize_all()
 
                 time_to_wait = period - (datetime.now() - start).total_seconds()
@@ -84,7 +85,7 @@ class Synchronizer:
         # delay = datetime.now() - start
         # sleep(delay.total_seconds() if delay.total_seconds() > 0 else 0)
         # start = datetime.now()
-        repos_db = ReposDatabaseHandler()
+        repos_db = DataBaseHandler()
 
         ids, urls, logins, passwords, paths, periods = repos_db.get_master_repos()
 
@@ -95,7 +96,7 @@ class Synchronizer:
     def get_repository_local_path(self, repo_id):
         folder = ''
         try:
-            repos_db = ReposDatabaseHandler()
+            repos_db = DataBaseHandler()
             ids, urls, logins, passwords, paths, periods = repos_db.get_master_repos()
             for i in range(len(ids)):
                 if ids[i] == repo_id:
@@ -109,9 +110,11 @@ class Synchronizer:
         folder = self.get_repository_local_path(repo_id)
         if not folder:
             return
-
-        self.end_synchronization_loop(repo_id)
-        self.threads[repo_id][0].join()
+        try:
+            self.end_synchronization_loop(repo_id)
+            self.threads[repo_id][0].join()
+        except KeyError:
+            pass
 
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
@@ -130,3 +133,11 @@ class Synchronizer:
     def end_all_synchronization_loops(self):
         for id in self.threads.keys():
             self.end_synchronization_loop(id)
+
+#
+s = Synchronizer()
+s.synchronize_all_repos()
+# input()
+# s.end_all_synchronization_loops()
+#
+# # s.remove_repository('test')
