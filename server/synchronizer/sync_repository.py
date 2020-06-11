@@ -59,6 +59,7 @@ class SyncRepository:
             new_remote = self.localRepo \
                 .create_remote(rem_name, remote_url)
             self.remotes.append([new_remote, login, password])
+            log(f'Remote pointing to {remote_url} successfully added')
         except exc.GitCommandError as e:
             log(f'Error while adding remote {remote_url} : {e}', 2)
 

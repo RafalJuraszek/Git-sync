@@ -22,11 +22,11 @@ def remove_remote(local_path, remote_url):
         repo = Repo(local_path)
         if not repo.bare:
             repo.delete_remote(generate_remote_name(remote_url))
+            log(f"Remote pointing to {remote_url} successfully removed")
     except KeyboardInterrupt:
         raise
     except Exception as e:
-        log("Exception while removing branch", 2)
-        log(e, 2)
+        log(f"Exception while removing branch: {e}", 2)
 
 
 class Synchronizer:
@@ -37,7 +37,7 @@ class Synchronizer:
         self.threads = {}
 
     def synchronization_loop(self, repo_id, url, login, password, path, period, closing_event: Event):
-        log(f'Synchronization started for {repo_id}')
+        log(f'Synchronization loop started for {repo_id}')
         try:
             while True:
                 start = datetime.now()
@@ -128,11 +128,12 @@ class Synchronizer:
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
+                log(f'Repository {repo_id} successfully removed')
             except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (file_path, e))
+                log('Failed to delete %s. Reason: %s' % (file_path, e), 2)
 
     def end_synchronization_loop(self, repo_id):
-        log(f'Closing synchronization loop for repository {repo_id} on {self.threads[repo_id][0].name}')
+        log(f'Closing synchronization loop for repository {repo_id} on thread {self.threads[repo_id][0].name}')
         self.threads[repo_id][1].set()
 
     def end_all_synchronization_loops(self):
