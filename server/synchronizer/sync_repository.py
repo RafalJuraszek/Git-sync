@@ -6,7 +6,6 @@ import logging
 
 
 def log(message, lvl=0):
-    status = {0: 'INFO', 1: 'WARNING', 2: 'ERROR'}
     if lvl == 0:
         logging.info(message)
     elif lvl == 1:
