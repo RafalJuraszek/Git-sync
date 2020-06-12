@@ -33,27 +33,6 @@ export class NotifyComponent implements OnInit {
   ngOnInit(): void {
     this.repoService.getRepos().subscribe((repos) => (this.repos = repos));
 
-
-    // to refactor during integration with backend
-    const mockRepo1 = new RepoModel(
-      'MockupRepo',
-      'anyUrl1',
-      'pass',
-      'password123',
-      '/path/to/mockup/repo',
-      [],
-      10
-    );
-    const mockRepo2 = new RepoModel('MyRepo',
-      'anyUrl2',
-      'me',
-      'me123',
-      '/path/to/my/repo',
-      [],
-      10
-    );
-    this.repos.push(mockRepo1, mockRepo2);
-
   }
 
   notify() {
