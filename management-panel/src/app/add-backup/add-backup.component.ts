@@ -1,9 +1,9 @@
-import { Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import {Component, ElementRef, ViewChild, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {Router} from '@angular/router';
-import {RepoModel} from "../model/repo.model";
-import {RepoService} from "../services/repo.service";
-import {BackupModel} from "../model/backup.model";
+import {RepoModel} from '../model/repo.model';
+import {RepoService} from '../services/repo.service';
+import {BackupModel} from '../model/backup.model';
 
 @Component({
   selector: 'app-add-backup',
@@ -30,7 +30,7 @@ export class AddBackupComponent implements OnInit {
     this.allBackups = this.currentRepo.backups;
     if ((<any> window).require) {
       try {
-        const Dialogs = (<any> window).require('dialogs')
+        const Dialogs = (<any> window).require('dialogs');
         this.dialog = Dialogs();
       } catch (e) {
         throw e;
@@ -50,7 +50,7 @@ export class AddBackupComponent implements OnInit {
 
   addBackup() {
     if (this.allBackups.map(backup => backup.url).includes(this.url.nativeElement.value)) {
-      this.dialog.alert("Backup with given url already exist!");
+      this.dialog.alert('Backup with given url already exist!');
       return;
     }
 
@@ -64,16 +64,20 @@ export class AddBackupComponent implements OnInit {
   deleteBackup(backup: BackupModel) {
     this.removeBackup(this.allBackups, backup);
 
-    if (this.newBackups.includes(backup))
+    if (this.newBackups.includes(backup)) {
       this.removeBackup(this.newBackups, backup);
-    else
-      this.repoService.deleteBackup(this.currentRepo.id, backup.url);
+    } else {
+      this.repoService.deleteBackup(this.currentRepo.id, backup.url).subscribe(data => {
+        console.log('test');
+      });
+    }
   }
 
   onSubmit() {
     const newFrequency = parseInt(this.frequency.nativeElement.value);
-    this.repoService.modifyRepo(this.currentRepo.id, this.newBackups, newFrequency);
-    this.router.navigateByUrl('/');
+    this.repoService.modifyRepo(this.currentRepo.id, this.newBackups, newFrequency).subscribe(data => {
+      this.router.navigateByUrl('/');
+    });
   }
 
   onFrequencyChanged(e) {
@@ -86,8 +90,8 @@ export class AddBackupComponent implements OnInit {
   }
 
   private clearForm() {
-    this.url.nativeElement.value = "";
-    this.login.nativeElement.value = "";
+    this.url.nativeElement.value = '';
+    this.login.nativeElement.value = '';
     this.password.nativeElement.value = "";
   }
 }
