@@ -1,11 +1,11 @@
 from flask import Flask, request
 from flask import json
 from json import JSONEncoder
-from server.database_maintenance.database_handler import ReposDatabaseHandler
+from database_maintenance.database_handler import ReposDatabaseHandler
 from flask import jsonify
-from server.notificator.email_client.notificator import notify
-from server.synchronizer.synchronizer import Synchronizer
-from server.database_maintenance.database_initializer import DatabaseInitializer
+from notificator.email_client.notificator import notify
+from synchronizer.synchronizer import Synchronizer
+from database_maintenance.database_initializer import DatabaseInitializer
 from flask import Response
 
 app = Flask(__name__)
