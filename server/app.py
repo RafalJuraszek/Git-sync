@@ -1,3 +1,8 @@
+import signal
+import sys
+from time import sleep
+
+import requests
 from flask import Flask, request
 from flask import json
 from json import JSONEncoder
@@ -61,12 +66,11 @@ def add_repo():
         # print("DEBUG>>>>>>>>>>")
         return send_400_db_error(db_communicate)
 
-
     for backup_repo in backups_json:
-        db_communicate =repos_db.insert_data_backup_repos(data.get('id', None),
-                                          backup_repo.get('url', None),
-                                          backup_repo.get('login', None),
-                                          backup_repo.get('password', None))
+        db_communicate = repos_db.insert_data_backup_repos(data.get('id', None),
+                                                           backup_repo.get('url', None),
+                                                           backup_repo.get('login', None),
+                                                           backup_repo.get('password', None))
 
         if not db_communicate == "ok":
             print(db_communicate)
@@ -194,11 +198,9 @@ def get_notify_data():
     return response
 
 
-
-
-
 def send_400_db_error(message):
-    return Response("{\"message\":\"" + message+"\"}", status=400, mimetype='application/json')
+    return Response("{\"message\":\"" + message + "\"}", status=400, mimetype='application/json')
+
 
 class Repo:
 
@@ -212,8 +214,42 @@ class MyEncoder(JSONEncoder):
         return o.__dict__
 
 
+def shutdown_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    print("Shutting down starts")
+    synchronizer.end_all_synchronization_loops()
+    shutdown_server()
+    print("Shutting down starts")
+    return 'Server shutting down...'
+
+def thread_webAPP():
+    print("start")
+    db_init = DatabaseInitializer()
+    db_init.create_tables_if_not_exist()
+    synchronizer.synchronize_all_repos()
+    app.run(debug=True)
+
+
 if __name__ == "__main__":
     print("start")
+
+    def handler(signal, frame):
+        try:
+            print('CTRL-C pressed!')
+            requests.post('http://127.0.0.1:5000/shutdown')
+            sleep(1)
+            sys.exit(0)
+        except:
+            sys.exit(0)
+
+    signal.signal(signal.SIGINT, handler)
+
     db_init = DatabaseInitializer()
     db_init.create_tables_if_not_exist()
     synchronizer.synchronize_all_repos()
