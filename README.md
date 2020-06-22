@@ -2,7 +2,7 @@
 > Application for synchronizing backup repositories (based on git - Github, Bitbucket, Gitlab etc.) with the main repository (on the github)
 
 ## Full Polish documentation (including "Developer documentation", "User documentation" etc.)
- link here
+* [Documentation](https://rafaljuraszek.github.io/Git-sync/documentation.pdf)
  
 ## Requirements
 * [Python 3.8](https://www.python.org/downloads/)
@@ -32,6 +32,31 @@ This folder can be generated for your operating system using the following comma
 * `npm run pack`
 
 After completing the above commands, a new directory should appear in the project containing files enabling direct launch of the client part.
+
+### Application views
+### Home page
+<br/>
+
+![Imag1](pictures/home.PNG)
+
+### Add repository
+<br/>
+
+![Imag2](pictures/add-repo.PNG)
+
+### Modify repository
+<br/>
+
+![Image3](pictures/modify_repo.PNG)
+### Notify
+<br/>
+
+![Image4](pictures/notify.PNG)
+
+### Email message
+<br/>
+
+![Image5](pictures/backup_info.PNG)
 
 ## Contributors
 
