@@ -24,6 +24,7 @@
 #### Folders containing executable files:
 * [Windows 10 (x64)](https://drive.google.com/file/d/1TAnPcomYw_2lBVPXJbAwzFK1YJpbFaIQ/view?usp=sharing)
 * [macOS](https://drive.google.com/file/d/1btyLe4TVDgkOUJqjsyNE5VG3EAw2n3cm/view?usp=sharing)
+* [Ubuntu (18)](https://drive.google.com/file/d/1Iy8Ghchl3x4hYE0HGabsGkm-UH2XjClO/view?fbclid=IwAR34zHpk-ciAWrx1l9mdEgrMKZcCvVHYMCfBsD9Mu0WnMfWvZONyHy2O0T0)
 
 This folder can be generated for your operating system using the following commands (Node and npm required):
 * `npm install -g @angular/cli`
