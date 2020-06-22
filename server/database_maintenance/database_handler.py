@@ -1,8 +1,10 @@
 import sqlite3
 from .database_localizator import DBLocation
 from .error_messages_for_user import *
+from .security_utils import *
 
 class EmailsDatabaseHandler:
+
 
     def __init__(self) -> None:
         try:
@@ -189,6 +191,7 @@ class ReposDatabaseHandler:
                     print("sqlite connection is closed")
 
 
+
             try:
                 sqliteConnection = sqlite3.connect(DBLocation().home_sql_lite)
                 sqlite_create_table_query = '''CREATE TABLE IF NOT EXISTS backupRepos (
@@ -264,7 +267,8 @@ class ReposDatabaseHandler:
                                VALUES 
                               (?, ?, ?, ?, ?, ?)"""
 
-            data_tuple = (id, url, login, password, path, frequency)
+
+            data_tuple = (id, url, login, encode_word(password), path, frequency)
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             print("DB inserted successfully into master_repos table")
@@ -294,7 +298,8 @@ class ReposDatabaseHandler:
                                VALUES 
                               (?, ?, ?, ?)"""
 
-            data_tuple = (master_repo_id, url, login, password)
+
+            data_tuple = (master_repo_id, url, login, encode_word(password))
             cursor.execute(sqlite_insert_with_param, data_tuple)
             sqliteConnection.commit()
             print("Python Variables inserted successfully into backup_repos table")
@@ -326,7 +331,8 @@ class ReposDatabaseHandler:
                             SET login = ?,
                                 password = ? 
                             WHERE master_repo_id = ? AND url = ?"""
-            data_tuple = ( login,password, master_repo_id, url)
+
+            data_tuple = (login,  encode_word(password), master_repo_id, url)
             self.cursor.execute(update_query, data_tuple)
             self.connection.commit()
         except sqlite3.Error as error:
@@ -339,9 +345,10 @@ class ReposDatabaseHandler:
             data_tuple = ( master_repo_id, url)
             self.cursor.execute(select_query, data_tuple)
             if len(self.cursor.fetchall()) == 0:
-                self.insert_data_backup_repos(master_repo_id,url, login, password)
+
+                self.insert_data_backup_repos(master_repo_id, url, login, encode_word(password))
             else:
-                self.update_backup_repo(master_repo_id,url, login, password)
+                self.update_backup_repo(master_repo_id, url, login, encode_word(password))
         except sqlite3.Error as error:
             print("Error while select * from table backup_repos")
             print(error)
@@ -361,7 +368,8 @@ class ReposDatabaseHandler:
                 ids.append(row[0])
                 urls.append(row[1])
                 logins.append(row[2])
-                passwords.append(row[3])
+
+                passwords.append(decode_word(row[3]))
                 paths.append(row[4])
                 frequency.append(row[5])
             print("get debug")
@@ -400,7 +408,9 @@ class ReposDatabaseHandler:
                 # print("jakies backupy")
                 urls.append(row[0])
                 logins.append(row[1])
-                passwords.append(row[2])
+
+                passwords.append(decode_word(row[2]))
+
 
             return urls, logins, passwords
         except sqlite3.Error as error:
