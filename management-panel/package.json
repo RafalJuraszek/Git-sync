@@ -46,7 +46,7 @@
     "@types/node": "^12.11.1",
     "codelyzer": "^5.1.2",
     "concurrently": "^5.2.0",
-    "electron": "^9.0.0",
+    "electron": "^13.6.6",
     "electron-packager": "^14.2.1",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
